@@ -1,3 +1,5 @@
+import { Zone, ZONE_DEFINITIONS } from './zone.js';
+
 /**
  * World class - manages the game world, ores, and zones
  */
@@ -17,16 +19,22 @@ export class World {
             color: '#27ae60'
         };
         
-        // Ore types
-        this.oreTypes = [
-            { name: 'Coal', color: '#2c3e50', value: 10, requiredPower: 1, health: 3 },
-            { name: 'Iron', color: '#95a5a6', value: 25, requiredPower: 2, health: 5 },
-            { name: 'Gold', color: '#f1c40f', value: 50, requiredPower: 3, health: 8 },
-            { name: 'Diamond', color: '#3498db', value: 100, requiredPower: 5, health: 12 }
-        ];
+        // Initialize zones
+        this.zones = new Map();
+        this.currentZone = null;
+        this.initializeZones();
         
         // Spawn initial ores
         this.spawnOres();
+    }
+    
+    initializeZones() {
+        for (const def of ZONE_DEFINITIONS) {
+            const zone = new Zone(def);
+            zone.unlocked = def.id === 'surface'; // Surface is unlocked by default
+            this.zones.set(def.id, zone);
+        }
+        this.currentZone = this.zones.get('surface');
     }
     
     spawnOres() {
@@ -46,25 +54,21 @@ export class World {
             attempts++;
         } while (this.isInSellZone(x, y) && attempts < 10);
         
-        // Random ore type based on rarity
-        const rand = Math.random();
-        let oreType;
-        if (rand < 0.5) oreType = this.oreTypes[0]; // Coal
-        else if (rand < 0.8) oreType = this.oreTypes[1]; // Iron
-        else if (rand < 0.95) oreType = this.oreTypes[2]; // Gold
-        else oreType = this.oreTypes[3]; // Diamond
+        // Get random ore from current zone's ore table
+        const oreData = this.currentZone.getRandomOre();
         
         const ore = {
             x: x,
             y: y,
             width: 40,
             height: 40,
-            type: oreType.name,
-            color: oreType.color,
-            value: oreType.value,
-            requiredPower: oreType.requiredPower,
-            health: oreType.health,
-            maxHealth: oreType.health
+            type: oreData.type,
+            color: oreData.color,
+            value: oreData.value,
+            requiredPower: oreData.requiredPower,
+            health: oreData.health,
+            maxHealth: oreData.maxHealth,
+            rockStyle: this.currentZone.rockStyle
         };
         
         this.ores.push(ore);
@@ -100,12 +104,12 @@ export class World {
     }
     
     render(ctx) {
-        // Draw ground
-        ctx.fillStyle = '#8b7355';
+        // Draw ground with current zone's background color
+        ctx.fillStyle = this.currentZone.backgroundColor;
         ctx.fillRect(0, 0, this.width, this.height);
         
-        // Draw grid pattern
-        ctx.strokeStyle = '#7a6548';
+        // Draw grid pattern with current zone's grid color
+        ctx.strokeStyle = this.currentZone.gridColor;
         ctx.lineWidth = 1;
         for (let x = 0; x < this.width; x += 100) {
             ctx.beginPath();
@@ -128,6 +132,9 @@ export class World {
         ctx.textAlign = 'center';
         ctx.fillText('SELL ZONE', this.sellZone.x + this.sellZone.width / 2, this.sellZone.y + this.sellZone.height / 2);
         
+        // Draw portal
+        this.drawPortal(ctx);
+        
         // Draw ores
         for (const ore of this.ores) {
             this.drawOre(ctx, ore);
@@ -135,14 +142,47 @@ export class World {
     }
     
     drawOre(ctx, ore) {
-        // Draw ore body
-        ctx.fillStyle = ore.color;
-        ctx.fillRect(ore.x, ore.y, ore.width, ore.height);
+        const style = ore.rockStyle || 'square';
         
-        // Draw ore outline
+        // Draw ore body based on rock style
+        ctx.fillStyle = ore.color;
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2;
-        ctx.strokeRect(ore.x, ore.y, ore.width, ore.height);
+        
+        if (style === 'circle') {
+            ctx.beginPath();
+            ctx.arc(ore.x + ore.width / 2, ore.y + ore.height / 2, ore.width / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        } else if (style === 'diamond') {
+            ctx.beginPath();
+            ctx.moveTo(ore.x + ore.width / 2, ore.y);
+            ctx.lineTo(ore.x + ore.width, ore.y + ore.height / 2);
+            ctx.lineTo(ore.x + ore.width / 2, ore.y + ore.height);
+            ctx.lineTo(ore.x, ore.y + ore.height / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        } else if (style === 'hexagon') {
+            const cx = ore.x + ore.width / 2;
+            const cy = ore.y + ore.height / 2;
+            const size = ore.width / 2;
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i - Math.PI / 6;
+                const px = cx + size * Math.cos(angle);
+                const py = cy + size * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        } else {
+            // Default square
+            ctx.fillRect(ore.x, ore.y, ore.width, ore.height);
+            ctx.strokeRect(ore.x, ore.y, ore.width, ore.height);
+        }
         
         // Draw ore name
         ctx.fillStyle = '#ffffff';
@@ -158,13 +198,115 @@ export class World {
         ctx.fillRect(ore.x, ore.y - 8, ore.width * healthPercent, 4);
     }
     
+    drawPortal(ctx) {
+        const portal = this.currentZone.portalPosition;
+        const targetZone = this.zones.get(this.currentZone.portalTarget);
+        
+        if (!targetZone) return;
+        
+        // Draw portal
+        ctx.fillStyle = targetZone.unlocked ? '#9b59b6' : '#7f8c8d';
+        ctx.beginPath();
+        ctx.arc(portal.x, portal.y, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw portal glow
+        ctx.strokeStyle = targetZone.unlocked ? '#8e44ad' : '#95a5a6';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Draw portal text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(targetZone.unlocked ? `To ${targetZone.name}` : 'Locked', portal.x, portal.y + 5);
+        
+        if (!targetZone.unlocked) {
+            ctx.font = '10px Arial';
+            ctx.fillText(targetZone.unlockMessage, portal.x, portal.y + 20);
+        }
+    }
+    
+    checkPortalCollision(player) {
+        const portal = this.currentZone.portalPosition;
+        const dx = (player.x + player.width / 2) - portal.x;
+        const dy = (player.y + player.height / 2) - portal.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 50) {
+            return this.currentZone.portalTarget;
+        }
+        return null;
+    }
+    
+    switchZone(zoneId, player) {
+        const targetZone = this.zones.get(zoneId);
+        if (!targetZone) return false;
+        
+        if (!targetZone.unlocked) {
+            return false;
+        }
+        
+        this.currentZone = targetZone;
+        this.ores = []; // Clear ores
+        this.spawnOres(); // Spawn new ores for this zone
+        
+        // Reset player position
+        player.x = targetZone.startPosition.x;
+        player.y = targetZone.startPosition.y;
+        
+        return true;
+    }
+    
+    unlockZone(zoneId, player) {
+        const zone = this.zones.get(zoneId);
+        if (!zone) return false;
+        
+        if (zone.unlocked) return true;
+        
+        if (zone.canUnlock(player)) {
+            zone.unlocked = true;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    getCurrentZone() {
+        return this.currentZone;
+    }
+    
+    getZone(zoneId) {
+        return this.zones.get(zoneId);
+    }
+    
     toJSON() {
+        const zoneData = {};
+        for (const [id, zone] of this.zones) {
+            zoneData[id] = zone.toJSON();
+        }
+        
         return {
-            ores: this.ores
+            ores: this.ores,
+            currentZoneId: this.currentZone.id,
+            zones: zoneData
         };
     }
     
     fromJSON(data) {
         this.ores = data.ores;
+        
+        if (data.currentZoneId) {
+            this.currentZone = this.zones.get(data.currentZoneId);
+        }
+        
+        if (data.zones) {
+            for (const [id, zoneData] of Object.entries(data.zones)) {
+                const zone = this.zones.get(id);
+                if (zone) {
+                    zone.fromJSON(zoneData);
+                }
+            }
+        }
     }
 }

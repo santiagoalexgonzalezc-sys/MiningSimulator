@@ -21,6 +21,11 @@ export class Player {
         // Pickaxe tier
         this.pickaxeTier = 0;
         this.pickaxeNames = ['Wooden', 'Stone', 'Iron', 'Steel', 'Gold', 'Diamond', 'Mythic'];
+        
+        // Level system
+        this.level = 1;
+        this.xp = 0;
+        this.xpToNextLevel = 100;
     }
     
     update(dt, keys, world) {
@@ -97,12 +102,30 @@ export class Player {
         const isCritical = Math.random() < this.criticalChance;
         const multiplier = isCritical ? 2 : 1;
         
+        // Add XP based on ore value
+        this.addXP(Math.floor(ore.value / 10));
+        
         // Return mined value
         return {
             type: ore.type,
             value: ore.value * multiplier,
             isCritical: isCritical
         };
+    }
+    
+    addXP(amount) {
+        this.xp += amount;
+        
+        // Check for level up
+        while (this.xp >= this.xpToNextLevel) {
+            this.xp -= this.xpToNextLevel;
+            this.level++;
+            this.xpToNextLevel = Math.floor(this.xpToNextLevel * 1.5);
+            
+            // Bonus stats on level up
+            this.miningPower += 1;
+            this.criticalChance += 0.01;
+        }
     }
     
     upgradePickaxe() {
@@ -140,7 +163,10 @@ export class Player {
             miningPower: this.miningPower,
             miningSpeed: this.miningSpeed,
             criticalChance: this.criticalChance,
-            pickaxeTier: this.pickaxeTier
+            pickaxeTier: this.pickaxeTier,
+            level: this.level,
+            xp: this.xp,
+            xpToNextLevel: this.xpToNextLevel
         };
     }
     
@@ -152,5 +178,8 @@ export class Player {
         this.miningSpeed = data.miningSpeed;
         this.criticalChance = data.criticalChance;
         this.pickaxeTier = data.pickaxeTier;
+        this.level = data.level || 1;
+        this.xp = data.xp || 0;
+        this.xpToNextLevel = data.xpToNextLevel || 100;
     }
 }

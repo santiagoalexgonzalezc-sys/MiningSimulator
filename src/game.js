@@ -135,6 +135,9 @@ export class Game {
         // Check sell zone
         this.checkSellZone();
         
+        // Check zone portal
+        this.checkZonePortal();
+        
         // Update UI
         this.updateUI();
     }
@@ -168,6 +171,60 @@ export class Game {
                 this.player.money += total;
             }
         }
+    }
+    
+    checkZonePortal() {
+        const targetZoneId = this.world.checkPortalCollision(this.player);
+        if (targetZoneId) {
+            const targetZone = this.world.getZone(targetZoneId);
+            
+            if (targetZone.unlocked) {
+                // Switch zones
+                if (this.world.switchZone(targetZoneId, this.player)) {
+                    this.showZoneMessage(`Entered ${targetZone.name}`);
+                }
+            } else {
+                // Try to unlock
+                if (this.world.unlockZone(targetZoneId, this.player)) {
+                    this.showZoneMessage(`Unlocked ${targetZone.name}!`);
+                } else {
+                    this.showZoneMessage(targetZone.unlockMessage);
+                }
+            }
+        }
+    }
+    
+    showZoneMessage(message) {
+        // Create or update message element
+        let msgElement = document.getElementById('zoneMessage');
+        if (!msgElement) {
+            msgElement = document.createElement('div');
+            msgElement.id = 'zoneMessage';
+            msgElement.style.cssText = `
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.95);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                z-index: 1000;
+                border: 2px solid #3498db;
+                text-align: center;
+            `;
+            document.body.appendChild(msgElement);
+        }
+        
+        msgElement.textContent = message;
+        msgElement.style.display = 'block';
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            msgElement.style.display = 'none';
+        }, 3000);
     }
     
     render() {
@@ -218,6 +275,35 @@ export class Game {
         if (this.uiElements.inventory) {
             this.uiElements.inventory.innerHTML = this.inventory.render();
         }
+        
+        // Update zone display
+        this.updateZoneDisplay();
+    }
+    
+    updateZoneDisplay() {
+        let zoneElement = document.getElementById('zoneDisplay');
+        
+        if (!zoneElement) {
+            zoneElement = document.createElement('div');
+            zoneElement.id = 'zoneDisplay';
+            zoneElement.style.cssText = `
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.9);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                pointer-events: auto;
+            `;
+            document.getElementById('ui').appendChild(zoneElement);
+        }
+        
+        const currentZone = this.world.getCurrentZone();
+        zoneElement.textContent = `Zone: ${currentZone.name} | Level: ${this.player.level}`;
     }
 }
 
