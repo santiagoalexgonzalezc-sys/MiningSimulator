@@ -54,22 +54,9 @@ export class World {
             attempts++;
         } while (this.isInSellZone(x, y) && attempts < 10);
         
-        // Get random ore from current zone's ore table
-        const oreData = this.currentZone.getRandomOre();
-        
-        const ore = {
-            x: x,
-            y: y,
-            width: 40,
-            height: 40,
-            type: oreData.type,
-            color: oreData.color,
-            value: oreData.value,
-            requiredPower: oreData.requiredPower,
-            health: oreData.health,
-            maxHealth: oreData.maxHealth,
-            rockStyle: this.currentZone.rockStyle
-        };
+        // Get random ore from current zone's ore table using new system
+        const ore = this.currentZone.getRandomOre(x, y);
+        ore.rockStyle = this.currentZone.rockStyle;
         
         this.ores.push(ore);
     }
@@ -144,6 +131,12 @@ export class World {
     drawOre(ctx, ore) {
         const style = ore.rockStyle || 'square';
         
+        // Draw glow effect for rare ores
+        if (ore.glowColor && ore.glowIntensity > 0) {
+            ctx.shadowColor = ore.glowColor;
+            ctx.shadowBlur = ore.glowIntensity;
+        }
+        
         // Draw ore body based on rock style
         ctx.fillStyle = ore.color;
         ctx.strokeStyle = '#000000';
@@ -184,11 +177,22 @@ export class World {
             ctx.strokeRect(ore.x, ore.y, ore.width, ore.height);
         }
         
-        // Draw ore name
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '10px Arial';
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        
+        // Draw ore name with rarity color
+        ctx.fillStyle = ore.glowColor || '#ffffff';
+        ctx.font = ore.glowIntensity > 5 ? 'bold 11px Arial' : '10px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(ore.type, ore.x + ore.width / 2, ore.y + ore.height / 2 + 4);
+        
+        // Draw rarity indicator for rare ores
+        if (ore.rarity && ore.rarity !== 'Common') {
+            ctx.fillStyle = ore.glowColor;
+            ctx.font = '8px Arial';
+            ctx.fillText(ore.rarity, ore.x + ore.width / 2, ore.y + ore.height / 2 + 16);
+        }
         
         // Draw health bar
         const healthPercent = ore.health / ore.maxHealth;

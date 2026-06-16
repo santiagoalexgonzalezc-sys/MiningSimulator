@@ -152,10 +152,57 @@ export class Game {
         if (ore && this.player.canMine(ore)) {
             const mined = this.player.mine(ore);
             if (mined) {
-                this.inventory.add(ore.type, ore.value);
+                this.inventory.add(ore.type, ore.value, ore.rarity);
                 this.world.removeOre(ore);
+                
+                // Show drop feedback
+                const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
+                this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
             }
         }
+    }
+    
+    showDropFeedback(text, color, intensity) {
+        // Create feedback element
+        const feedback = document.createElement('div');
+        feedback.textContent = text;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${color ? color + 'cc' : 'rgba(44, 62, 80, 0.9)'};
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: ${intensity > 8 ? '20px' : '16px'};
+            font-weight: ${intensity > 5 ? 'bold' : 'normal'};
+            z-index: 1000;
+            border: ${intensity > 5 ? `2px solid ${color}` : 'none'};
+            box-shadow: ${intensity > 5 ? `0 0 ${intensity}px ${color}` : 'none'};
+            pointer-events: none;
+            animation: floatUp 1.5s ease-out forwards;
+        `;
+        
+        // Add animation keyframes if not exists
+        if (!document.getElementById('dropFeedbackStyle')) {
+            const style = document.createElement('style');
+            style.id = 'dropFeedbackStyle';
+            style.textContent = `
+                @keyframes floatUp {
+                    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    100% { opacity: 0; transform: translateX(-50%) translateY(-50px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(feedback);
+        
+        // Remove after animation
+        setTimeout(() => {
+            feedback.remove();
+        }, 1500);
     }
     
     checkSellZone() {

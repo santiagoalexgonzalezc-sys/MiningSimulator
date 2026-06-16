@@ -2,12 +2,54 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 2 Features
+## Phase 3 Features
+
+- **Ore Rarity System**: 6 rarity tiers (Common, Uncommon, Rare, Epic, Legendary, Mythic)
+- **Rarity-Based Drop Chances**: Weighted rarity drops per zone (better zones = rarer ores)
+- **Ore Value Scaling**: Base value × rarity multiplier × zone bonus
+- **Visual Rarity Indicators**: Glow effects and colored text for rare ores
+- **Drop Feedback System**: Animated popup text showing ore type and rarity
+- **Enhanced Inventory**: Sorted by rarity, highlighted rare items with colors
+- **Centralized Ore Data**: Data-driven ore system for easy expansion
+
+### Rarity System
+
+**Common** (1.0x value)
+- Gray color, no glow
+- Most frequent in Surface Mine
+
+**Uncommon** (1.5x value)
+- Green color, subtle glow
+- Common in all zones
+
+**Rare** (2.5x value)
+- Blue color, moderate glow
+- Appears in Cave Mine and deeper
+
+**Epic** (4.0x value)
+- Purple color, strong glow
+- Found in Crystal Mine and Lava Mine
+
+**Legendary** (7.0x value)
+- Orange color, intense glow
+- Rare drops in Lava Mine
+
+**Mythic** (15.0x value)
+- Red color, maximum glow
+- Extremely rare in Lava Mine
+
+### Zone Rarity Distribution
+
+**Surface Mine**: Mostly Common/Uncommon
+**Cave Mine**: Common/Uncommon/Rare
+**Crystal Mine**: Rare/Epic/Legendary
+**Lava Mine**: Epic/Legendary/Mythic
+
+## Phase 2 Features (Retained)
 
 - **Multiple Mining Zones**: 4 unique zones (Surface, Cave, Crystal, Lava)
 - **Zone Unlock System**: Unlock deeper zones by earning money
 - **Zone Transition System**: Teleport pads between zones
-- **Zone-Specific Ore Tables**: Different ores and drop chances per zone
 - **Unique Zone Visuals**: Different background colors and rock styles per zone
 - **Level & XP System**: Gain XP from mining and level up for bonuses
 - **Zone UI Display**: Shows current zone and player level
@@ -16,25 +58,21 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 
 **Surface Mine** (Default)
 - Background: Brown earth
-- Ores: Coal (60%), Iron (40%)
 - Rock Style: Square
 - Unlock: Free
 
 **Cave Mine**
 - Background: Dark gray
-- Ores: Iron (50%), Gold (50%)
 - Rock Style: Circle
 - Unlock: $500
 
 **Crystal Mine**
 - Background: Dark blue
-- Ores: Gold (40%), Diamond (40%), Emerald (20%)
 - Rock Style: Diamond
 - Unlock: $2,000
 
 **Lava Mine**
 - Background: Dark red
-- Ores: Diamond (30%), Ruby (20%), Mythic (5%)
 - Rock Style: Hexagon
 - Unlock: $5,000
 
@@ -54,10 +92,12 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 1. Open `index.html` in a modern web browser
 2. Use **WASD** or **Arrow Keys** to move the player
 3. Click on ores to mine them (must be within range)
-4. Walk into the green **SELL ZONE** to sell all ores
-5. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-6. Click **Shop** to buy upgrades with your money
-7. Click **Save Game** to manually save progress
+4. Watch for rarity indicators (glow effects) on rare ores
+5. See drop feedback showing ore type and rarity when mining
+6. Walk into the green **SELL ZONE** to sell all ores
+7. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
+8. Click **Shop** to buy upgrades with your money
+9. Click **Save Game** to manually save progress
 
 ## Controls
 
@@ -82,6 +122,7 @@ MiningSimulator/
 │   ├── camera.js       # Camera following system
 │   ├── world.js        # World generation and zone management
 │   ├── zone.js         # Zone definitions and properties
+│   ├── oreData.js      # Centralized ore data and rarity system
 │   ├── inventory.js    # Inventory management
 │   ├── shop.js         # Upgrade shop system
 │   └── save.js         # LocalStorage save/load
@@ -94,11 +135,11 @@ MiningSimulator/
 - **Performance**: Target 60 FPS with efficient collision detection
 - **Storage**: LocalStorage for persistent saves (under 100 KB)
 - **Zone System**: Data-driven zone definitions for easy expansion
+- **Ore System**: Centralized data-driven ore and rarity system
 
 ## Future Phases
 
-This is Phase 2 of a 10-phase development plan. Future phases will include:
-- Ore rarity system overhaul
+This is Phase 3 of a 10-phase development plan. Future phases will include:
 - Equipment progression
 - Backpack upgrades
 - Quest system

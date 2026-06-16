@@ -8,11 +8,18 @@ export class Inventory {
         this.used = 0;
     }
     
-    add(type, value) {
+    add(type, value, rarity = 'Common') {
         if (!this.items[type]) {
-            this.items[type] = { count: 0, value: value };
+            this.items[type] = { count: 0, value: value, rarity: rarity };
         }
         this.items[type].count++;
+        // Update to highest rarity found
+        const rarityOrder = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'];
+        const currentRarityIndex = rarityOrder.indexOf(this.items[type].rarity);
+        const newRarityIndex = rarityOrder.indexOf(rarity);
+        if (newRarityIndex > currentRarityIndex) {
+            this.items[type].rarity = rarity;
+        }
         this.used++;
     }
     
@@ -64,14 +71,36 @@ export class Inventory {
             html += '<p>Empty</p>';
         } else {
             html += '<ul>';
-            for (const type in this.items) {
-                const item = this.items[type];
-                html += `<li>${type}: ${item.count} ($${item.value} each)</li>`;
+            // Sort by rarity then value
+            const sortedItems = Object.entries(this.items).sort((a, b) => {
+                const rarityOrder = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'];
+                const rarityA = rarityOrder.indexOf(a[1].rarity);
+                const rarityB = rarityOrder.indexOf(b[1].rarity);
+                if (rarityA !== rarityB) return rarityB - rarityA;
+                return b[1].value - a[1].value;
+            });
+            
+            for (const [type, item] of sortedItems) {
+                const rarityColor = this.getRarityColor(item.rarity);
+                const rarityStyle = item.rarity !== 'Common' ? `color: ${rarityColor}; font-weight: bold;` : '';
+                html += `<li style="${rarityStyle}">${type}: ${item.count} ($${item.value} each) [${item.rarity}]</li>`;
             }
             html += '</ul>';
         }
         
         return html;
+    }
+    
+    getRarityColor(rarity) {
+        const colors = {
+            'Common': '#95a5a6',
+            'Uncommon': '#27ae60',
+            'Rare': '#3498db',
+            'Epic': '#9b59b6',
+            'Legendary': '#f39c12',
+            'Mythic': '#e74c3c'
+        };
+        return colors[rarity] || '#ffffff';
     }
     
     toJSON() {

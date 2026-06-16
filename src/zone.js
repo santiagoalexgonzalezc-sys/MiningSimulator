@@ -1,3 +1,5 @@
+import { generateOre } from './oreData.js';
+
 /**
  * Zone class - represents a mining zone with unique properties
  */
@@ -7,7 +9,6 @@ export class Zone {
         this.name = config.name;
         this.backgroundColor = config.backgroundColor;
         this.gridColor = config.gridColor;
-        this.oreTable = config.oreTable;
         this.unlockRequirement = config.unlockRequirement;
         this.unlockMessage = config.unlockMessage;
         this.startPosition = config.startPosition || { x: 400, y: 300 };
@@ -30,33 +31,8 @@ export class Zone {
         return false;
     }
     
-    getRandomOre() {
-        const rand = Math.random();
-        let cumulative = 0;
-        
-        for (const ore of this.oreTable) {
-            cumulative += ore.chance;
-            if (rand <= cumulative) {
-                return {
-                    type: ore.name,
-                    color: ore.color,
-                    value: ore.value,
-                    requiredPower: ore.requiredPower,
-                    health: ore.health,
-                    maxHealth: ore.health
-                };
-            }
-        }
-        
-        // Fallback to first ore
-        return {
-            type: this.oreTable[0].name,
-            color: this.oreTable[0].color,
-            value: this.oreTable[0].value,
-            requiredPower: this.oreTable[0].requiredPower,
-            health: this.oreTable[0].health,
-            maxHealth: this.oreTable[0].health
-        };
+    getRandomOre(x, y) {
+        return generateOre(this.id, x, y);
     }
     
     toJSON() {
@@ -83,11 +59,7 @@ export const ZONE_DEFINITIONS = [
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'cave',
         unlockRequirement: null,
-        unlockMessage: null,
-        oreTable: [
-            { name: 'Coal', color: '#2c3e50', value: 10, requiredPower: 1, health: 3, chance: 0.6 },
-            { name: 'Iron', color: '#95a5a6', value: 25, requiredPower: 2, health: 5, chance: 0.4 }
-        ]
+        unlockMessage: null
     },
     {
         id: 'cave',
@@ -99,11 +71,7 @@ export const ZONE_DEFINITIONS = [
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'crystal',
         unlockRequirement: { type: 'money', value: 500 },
-        unlockMessage: 'Requires $500 to unlock',
-        oreTable: [
-            { name: 'Iron', color: '#95a5a6', value: 25, requiredPower: 2, health: 5, chance: 0.5 },
-            { name: 'Gold', color: '#f1c40f', value: 50, requiredPower: 3, health: 8, chance: 0.5 }
-        ]
+        unlockMessage: 'Requires $500 to unlock'
     },
     {
         id: 'crystal',
@@ -115,12 +83,7 @@ export const ZONE_DEFINITIONS = [
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'lava',
         unlockRequirement: { type: 'money', value: 2000 },
-        unlockMessage: 'Requires $2000 to unlock',
-        oreTable: [
-            { name: 'Gold', color: '#f1c40f', value: 50, requiredPower: 3, health: 8, chance: 0.4 },
-            { name: 'Diamond', color: '#3498db', value: 100, requiredPower: 5, health: 12, chance: 0.4 },
-            { name: 'Emerald', color: '#27ae60', value: 150, requiredPower: 6, health: 15, chance: 0.2 }
-        ]
+        unlockMessage: 'Requires $2000 to unlock'
     },
     {
         id: 'lava',
@@ -132,11 +95,6 @@ export const ZONE_DEFINITIONS = [
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'surface',
         unlockRequirement: { type: 'money', value: 5000 },
-        unlockMessage: 'Requires $5000 to unlock',
-        oreTable: [
-            { name: 'Diamond', color: '#3498db', value: 100, requiredPower: 5, health: 12, chance: 0.3 },
-            { name: 'Ruby', color: '#e74c3c', value: 200, requiredPower: 7, health: 18, chance: 0.2 },
-            { name: 'Mythic', color: '#9b59b6', value: 500, requiredPower: 10, health: 25, chance: 0.05 }
-        ]
+        unlockMessage: 'Requires $5000 to unlock'
     }
 ];
