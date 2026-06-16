@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- UI Overlay -->
+        <div id="ui">
+            <div id="stats">
+                <div id="money">Money: $0.00</div>
+            </div>
+            
+            <div id="inventory"></div>
+            
+            <div id="controls">
+                <button id="shopBtn">Shop</button>
+                <button id="saveBtn">Save Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load game modules -->
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
