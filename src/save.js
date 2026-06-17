@@ -13,6 +13,7 @@ export class SaveSystem {
             world: game.world.toJSON(),
             questManager: game.questManager.toJSON(),
             petManager: game.petManager.toJSON(),
+            rebirthManager: game.rebirthManager.toJSON(),
             timestamp: Date.now()
         };
         
@@ -32,8 +33,8 @@ export class SaveSystem {
             if (saveData) {
                 const data = JSON.parse(saveData);
                 
-                // Check if save data has petManager - if not, it's an old save
-                if (!data.petManager) {
+                // Check if save data has rebirthManager - if not, it's an old save
+                if (!data.rebirthManager) {
                     console.log('Old save detected, clearing incompatible save');
                     this.clear();
                     return false;
@@ -47,6 +48,9 @@ export class SaveSystem {
                 }
                 if (data.petManager) {
                     game.petManager.fromJSON(data.petManager);
+                }
+                if (data.rebirthManager) {
+                    game.rebirthManager.fromJSON(data.rebirthManager);
                 }
                 console.log('Game loaded successfully');
                 return true;

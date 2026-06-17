@@ -196,4 +196,14 @@ export class QuestManager {
         this.completedQuests = data.completedQuests || {};
         this.questProgress = data.questProgress || {};
     }
+    
+    reset() {
+        this.activeQuests = {};
+        this.completedQuests = {};
+        this.questProgress = {};
+    }
+    
+    getCompletedQuestCount() {
+        return Object.keys(this.completedQuests).length;
+    }
 }

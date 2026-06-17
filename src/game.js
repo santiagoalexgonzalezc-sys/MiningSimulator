@@ -7,6 +7,7 @@ import { SaveSystem } from './save.js';
 import { QuestManager } from './questManager.js';
 import { PetManager } from './petManager.js';
 import { getRarityInfo } from './petSystem.js';
+import { RebirthManager } from './rebirthManager.js';
 
 /**
  * Main Game class - manages the game loop and coordinates all systems
@@ -30,6 +31,7 @@ export class Game {
         this.saveSystem = null;
         this.questManager = null;
         this.petManager = null;
+        this.rebirthManager = null;
         
         // Input state
         this.keys = {};
@@ -51,7 +53,8 @@ export class Game {
         // Initialize systems
         this.saveSystem = new SaveSystem();
         this.petManager = new PetManager();
-        this.inventory = new Inventory(this.petManager);
+        this.rebirthManager = new RebirthManager();
+        this.inventory = new Inventory(this.petManager, this.rebirthManager);
         this.player = new Player(400, 300, this.inventory, this.petManager);
         this.camera = new Camera(this.player);
         this.world = new World(2000, 2000);
@@ -173,8 +176,12 @@ export class Game {
             const miningSpeedMultiplier = this.petManager.getMiningSpeedMultiplier();
             const critChanceBonus = this.petManager.getCritChanceBonus();
             
-            const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus);
-            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier;
+            // Apply rebirth bonuses
+            const rebirthMiningMultiplier = this.rebirthManager.getTotalMultiplier('mining_speed');
+            const rebirthCritBonus = this.rebirthManager.getTotalMultiplier('luck');
+            
+            const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus + rebirthCritBonus);
+            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier * rebirthMiningMultiplier;
             
             // Apply damage to ore
             ore.health -= damage;
@@ -524,6 +531,9 @@ export class Game {
         
         // Update pet display
         this.updatePetDisplay();
+        
+        // Update rebirth display
+        this.updateRebirthDisplay();
     }
     
     updateZoneDisplay() {
@@ -719,5 +729,184 @@ export class Game {
         
         modal.innerHTML = html;
         document.body.appendChild(modal);
+    }
+    
+    updateRebirthDisplay() {
+        let rebirthElement = document.getElementById('rebirthDisplay');
+        
+        if (!rebirthElement) {
+            rebirthElement = document.createElement('div');
+            rebirthElement.id = 'rebirthDisplay';
+            rebirthElement.style.cssText = `
+                position: absolute;
+                top: 150px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.9);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                pointer-events: auto;
+                border: 2px solid #e67e22;
+                cursor: pointer;
+            `;
+            rebirthElement.onclick = () => this.showRebirthPanel();
+            document.getElementById('ui').appendChild(rebirthElement);
+        }
+        
+        const canRebirth = this.rebirthManager.canRebirth(this.player, this.questManager);
+        rebirthElement.textContent = `Rebirth: ${this.rebirthManager.rebirthCount} | RP: ${this.rebirthManager.rebirthPoints} ${canRebirth ? '(READY)' : ''}`;
+        rebirthElement.style.borderColor = canRebirth ? '#e67e22' : '#7f8c8d';
+    }
+    
+    showRebirthPanel() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            border: 2px solid #e67e22;
+            min-width: 500px;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        `;
+        
+        let html = '<h2 style="margin-top: 0; color: #e67e22;">🔄 Rebirth System</h2>';
+        
+        // Rebirth info
+        html += '<div style="background: #2c3e50; padding: 15px; border-radius: 5px; margin-bottom: 15px;">';
+        html += `<p style="margin: 5px 0;">Rebirth Count: <strong style="color: #e67e22;">${this.rebirthManager.rebirthCount}</strong></p>`;
+        html += `<p style="margin: 5px 0;">Rebirth Points (RP): <strong style="color: #f39c12;">${this.rebirthManager.rebirthPoints}</strong></p>`;
+        html += `<p style="margin: 5px 0;">Next Rebirth RP: <strong style="color: #f39c12;">${this.rebirthManager.calculateRebirthPointsGained()}</strong></p>`;
+        html += '</div>';
+        
+        // Requirements
+        html += '<h3 style="margin-bottom: 10px;">Requirements</h3>';
+        const requirements = this.rebirthManager.getRequirementStatus(this.player, this.questManager);
+        html += '<div style="background: #2c3e50; padding: 15px; border-radius: 5px; margin-bottom: 15px;">';
+        html += `<p style="margin: 5px 0; color: ${requirements.money.met ? '#27ae60' : '#e74c3c'};">${requirements.money.met ? '✓' : '✗'} Money: $${requirements.money.current.toLocaleString()} / $${requirements.money.required.toLocaleString()}</p>`;
+        html += `<p style="margin: 5px 0; color: ${requirements.level.met ? '#27ae60' : '#e74c3c'};">${requirements.level.met ? '✓' : '✗'} Level: ${requirements.level.current} / ${requirements.level.required}</p>`;
+        html += `<p style="margin: 5px 0; color: ${requirements.quests.met ? '#27ae60' : '#e74c3c'};">${requirements.quests.met ? '✓' : '✗'} Quests: ${requirements.quests.current} / ${requirements.quests.required}</p>`;
+        html += '</div>';
+        
+        // Global multipliers
+        html += '<h3 style="margin-bottom: 10px;">Global Multipliers</h3>';
+        html += '<div style="background: #2c3e50; padding: 15px; border-radius: 5px; margin-bottom: 15px;">';
+        html += `<p style="margin: 5px 0;">Mining Speed: +${(this.rebirthManager.getRebirthMultiplier('mining_speed') - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">Ore Value: +${(this.rebirthManager.getRebirthMultiplier('ore_value') - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">XP Gain: +${(this.rebirthManager.getRebirthMultiplier('xp_gain') - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">Luck: +${this.rebirthManager.getRebirthMultiplier('luck') * 100}%</p>`;
+        html += '</div>';
+        
+        // Rebirth button
+        const canRebirth = this.rebirthManager.canRebirth(this.player, this.questManager);
+        html += `<button onclick="game.performRebirth()" 
+                ${canRebirth ? '' : 'disabled'}
+                style="margin-bottom: 15px; padding: 15px 30px; cursor: ${canRebirth ? 'pointer' : 'not-allowed'}; background: ${canRebirth ? '#e67e22' : '#7f8c8d'}; color: white; border: none; border-radius: 4px; width: 100%; font-size: 16px; font-weight: bold;">
+            🔄 Rebirth (Reset Progress)
+        </button>`;
+        
+        // Permanent upgrades
+        html += '<h3 style="margin-bottom: 10px;">Permanent Upgrades</h3>';
+        html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">';
+        
+        const upgrades = this.rebirthManager.getAllUpgrades();
+        for (const upgrade of upgrades) {
+            html += `
+                <div style="padding: 10px; background: ${upgrade.isMaxed ? '#27ae60' : '#34495e'}; border-radius: 5px; border: 2px solid ${upgrade.isMaxed ? '#27ae60' : '#3498db'};">
+                    <h4 style="margin: 0 0 5px 0; color: #3498db;">${upgrade.name}</h4>
+                    <p style="margin: 0 0 5px 0; font-size: 11px; color: #bdc3c7;">${upgrade.description}</p>
+                    <p style="margin: 0 0 5px 0; font-size: 11px; color: #bdc3c7;">Level: ${upgrade.currentLevel} / ${upgrade.maxLevel}</p>
+                    ${!upgrade.isMaxed ? `
+                        <button onclick="game.purchaseUpgrade('${upgrade.id}'); game.showRebirthPanel();" 
+                                ${upgrade.canAfford ? '' : 'disabled'}
+                                style="padding: 5px 10px; cursor: ${upgrade.canAfford ? 'pointer' : 'not-allowed'}; background: ${upgrade.canAfford ? '#3498db' : '#7f8c8d'}; color: white; border: none; border-radius: 4px; width: 100%; font-size: 11px;">
+                            Buy (${upgrade.cost} RP)
+                        </button>
+                    ` : '<p style="margin: 5px 0; font-size: 10px; color: #27ae60; text-align: center;">MAXED</p>'}
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        
+        html += '<button onclick="this.parentElement.remove()" style="padding: 10px 20px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; width: 100%;">Close</button>';
+        
+        modal.innerHTML = html;
+        document.body.appendChild(modal);
+    }
+    
+    performRebirth() {
+        if (!this.rebirthManager.canRebirth(this.player, this.questManager)) {
+            return;
+        }
+        
+        const rpGained = this.rebirthManager.rebirth(
+            this.player,
+            this.inventory,
+            this.world,
+            this.questManager,
+            this.petManager
+        );
+        
+        // Show rebirth feedback
+        const feedback = document.createElement('div');
+        feedback.textContent = `Rebirth! +${rpGained} RP`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(230, 126, 34, 0.95);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+            border: 2px solid #d35400;
+            text-align: center;
+        `;
+        document.body.appendChild(feedback);
+        setTimeout(() => feedback.remove(), 3000);
+        
+        // Update UI
+        this.updateRebirthDisplay();
+        this.showRebirthPanel();
+    }
+    
+    purchaseUpgrade(upgradeId) {
+        const success = this.rebirthManager.purchaseUpgrade(upgradeId);
+        if (success) {
+            // Show upgrade feedback
+            const upgrade = this.rebirthManager.getUpgradeLevel(upgradeId);
+            const feedback = document.createElement('div');
+            feedback.textContent = `Upgrade Purchased!`;
+            feedback.style.cssText = `
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(52, 152, 219, 0.95);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 10px;
+                font-size: 18px;
+                font-weight: bold;
+                z-index: 1001;
+                border: 2px solid #2980b9;
+                text-align: center;
+            `;
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 3000);
+        }
     }
 }

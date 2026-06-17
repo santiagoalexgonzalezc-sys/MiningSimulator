@@ -4,11 +4,12 @@ import { getSlotCost, calculateUsedSlots, canAddItem, getBackpack, getNextBackpa
  * Inventory class - manages player inventory and items
  */
 export class Inventory {
-    constructor(petManager) {
+    constructor(petManager, rebirthManager) {
         this.items = {};
         this.backpackId = 'small';
         this.backpack = getBackpack(this.backpackId);
         this.petManager = petManager;
+        this.rebirthManager = rebirthManager;
     }
     
     add(type, value, rarity = 'Common') {
@@ -47,8 +48,11 @@ export class Inventory {
         // Apply pet bonus to ore value
         const oreValueMultiplier = this.petManager ? this.petManager.getOreValueMultiplier() : 1;
         
+        // Apply rebirth bonus to ore value
+        const rebirthOreMultiplier = this.rebirthManager ? this.rebirthManager.getTotalMultiplier('ore_value') : 1;
+        
         for (const type in this.items) {
-            total += this.items[type].count * this.items[type].value * oreValueMultiplier;
+            total += this.items[type].count * this.items[type].value * oreValueMultiplier * rebirthOreMultiplier;
         }
         this.items = {};
         return total;
@@ -100,6 +104,14 @@ export class Inventory {
         this.backpackId = nextBackpack.id;
         this.backpack = nextBackpack;
         return true;
+    }
+    
+    clear() {
+        this.items = {};
+    }
+    
+    getBackpack(backpackId) {
+        return getBackpack(backpackId);
     }
     
     render() {

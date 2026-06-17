@@ -42,6 +42,19 @@ export class World {
         this.currentZone = this.zones.get('surface');
     }
     
+    resetZones() {
+        // Reset all zones except surface
+        for (const [zoneId, zone] of this.zones) {
+            if (zoneId !== 'surface') {
+                zone.unlocked = false;
+            }
+        }
+        this.currentZone = this.zones.get('surface');
+        // Clear ores
+        this.ores = [];
+        this.spawnOres();
+    }
+    
     initializeNPCs() {
         for (const npcId in NPCS) {
             const npc = NPCS[npcId];

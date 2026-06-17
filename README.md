@@ -2,7 +2,86 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 7 Features
+## Phase 8 Features
+
+- **Rebirth System**: Reset progression for permanent bonuses and infinite progression
+- **Rebirth Requirements**: Money ($100,000+), Level (50+), or Quests (10+) to rebirth
+- **Rebirth Points (RP)**: Permanent currency earned from rebirthing
+- **Global Multipliers**: Permanent bonuses from rebirth count (Mining Speed, Ore Value, XP Gain, Luck)
+- **Permanent Upgrades**: Spend RP on permanent upgrades
+- **Rebirth Shop**: 8 permanent upgrades available
+- **Rebirth UI Panel**: View requirements, rewards, and manage upgrades
+- **Rebirth Save System**: Rebirth data saved with game state
+- **Backward Compatibility**: Old saves automatically cleared for Phase 8
+
+### Rebirth Requirements
+
+Players can rebirth when they meet at least one of these requirements:
+- **Money**: $100,000+
+- **Level**: Level 50+
+- **Quests**: 10+ completed quests
+
+### Rebirth Rewards
+
+Each rebirth grants:
+- **Rebirth Points (RP)**: Base 1 RP, scales by 1.5x per rebirth
+- **Global Multipliers**: Permanent bonuses that stack with pets and equipment
+- **Mining Speed**: +5% per rebirth
+- **Ore Value**: +5% per rebirth
+- **XP Gain**: +5% per rebirth
+- **Luck**: +2% per rebirth
+
+### What Resets on Rebirth
+
+- Money
+- Inventory contents
+- Pickaxe level (resets to wooden)
+- Zone progression (resets to surface)
+- Active quests
+- Player level and XP
+
+### What Keeps on Rebirth
+
+- Rebirth Points (RP)
+- Permanent upgrades
+- Pets (kept permanently)
+- Rebirth count
+
+### Permanent Upgrades
+
+**Mining Speed Boost** (1 RP base, 1.5x scaling)
+- Permanently increase mining speed by 5%
+- Max Level: 50
+
+**Ore Rarity Luck** (2 RP base, 1.6x scaling)
+- Increase chance for rare ore drops by 3%
+- Max Level: 30
+
+**Backpack Capacity** (3 RP base, 1.7x scaling)
+- Increase backpack capacity by 10%
+- Max Level: 20
+
+**Faster Pet Leveling** (2 RP base, 1.5x scaling)
+- Pets gain XP 20% faster
+- Max Level: 25
+
+**Auto Sell Bonus** (2 RP base, 1.5x scaling)
+- Increase ore sell value by 5%
+- Max Level: 30
+
+**Starting Money** (1 RP base, 1.4x scaling)
+- Start with $500 more money after rebirth
+- Max Level: 20
+
+**Crit Chance Boost** (3 RP base, 1.8x scaling)
+- Increase critical hit chance by 2%
+- Max Level: 25
+
+**Zone Unlock Speed** (4 RP base, 2.0x scaling)
+- Reduce zone unlock cost by 5%
+- Max Level: 15
+
+## Phase 7 Features (Retained)
 
 - **Pet System**: Collectible pets that provide passive bonuses
 - **Pet Rarity System**: 6 rarity tiers (Common, Uncommon, Rare, Epic, Legendary, Mythic)
@@ -323,13 +402,15 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 3. Click on ores to mine them (must be within range)
 4. Click on NPCs to talk to them and accept quests
 5. Click on pet display to manage pets and view bonuses
-6. Watch for damage numbers and critical hit effects
-7. See drop feedback showing ore type and rarity when mining
-8. Manage backpack capacity - rare ores take more slots
-9. Walk into the green **SELL ZONE** to sell all ores
-10. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-11. Click **Shop** to upgrade pickaxes, backpack, and buy pet eggs
-12. Click **Save Game** to manually save progress
+6. Click on rebirth display to manage rebirth and permanent upgrades
+7. Watch for damage numbers and critical hit effects
+8. See drop feedback showing ore type and rarity when mining
+9. Manage backpack capacity - rare ores take more slots
+10. Walk into the green **SELL ZONE** to sell all ores
+11. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
+12. Click **Shop** to upgrade pickaxes, backpack, and buy pet eggs
+13. Click **Save Game** to manually save progress
+14. **Rebirth** when you meet requirements to gain permanent bonuses
 
 ## Controls
 
@@ -363,6 +444,8 @@ MiningSimulator/
 │   ├── questManager.js # Quest progress tracking and rewards
 │   ├── petSystem.js    # Centralized pet system and definitions
 │   ├── petManager.js   # Pet inventory and bonus management
+│   ├── rebirthSystem.js # Centralized rebirth system and definitions
+│   ├── rebirthManager.js # Rebirth logic and permanent upgrades
 │   └── save.js         # LocalStorage save/load
 ```
 
@@ -378,10 +461,10 @@ MiningSimulator/
 - **Inventory System**: Centralized slot-based inventory with backpack progression
 - **Quest System**: Centralized quest and NPC system with progress tracking
 - **Pet System**: Centralized pet system with rarity, bonuses, and leveling
+- **Rebirth System**: Centralized rebirth system with permanent upgrades and infinite progression
 
 ## Future Phases
 
-This is Phase 7 of a 10-phase development plan. Future phases will include:
-- Rebirth system
+This is Phase 8 of a 10-phase development plan. Future phases will include:
 - Bosses and events
 - Multiplayer support
