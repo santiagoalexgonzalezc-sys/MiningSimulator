@@ -32,6 +32,9 @@ export class Game {
         
         // UI elements
         this.uiElements = {};
+        
+        // Screen shake
+        this.screenShake = 0;
     }
     
     init() {
@@ -150,16 +153,73 @@ export class Game {
         // Check if clicking on an ore
         const ore = this.world.getOreAt(worldX, worldY);
         if (ore && this.player.canMine(ore)) {
-            const mined = this.player.mine(ore);
-            if (mined) {
-                this.inventory.add(ore.type, ore.value, ore.rarity);
-                this.world.removeOre(ore);
-                
-                // Show drop feedback
-                const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
-                this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
+            const pickaxe = this.player.getPickaxe();
+            const isCritical = Math.random() < pickaxe.critChance;
+            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1);
+            
+            // Apply damage to ore
+            ore.health -= damage;
+            
+            // Screen shake effect
+            this.screenShake = isCritical ? 5 : 2;
+            
+            // Show damage feedback
+            this.showDamageFeedback(damage, ore.x, ore.y, isCritical);
+            
+            // Check if ore is destroyed
+            if (ore.health <= 0) {
+                const mined = this.player.mine(ore);
+                if (mined) {
+                    this.inventory.add(ore.type, ore.value, ore.rarity);
+                    this.world.removeOre(ore);
+                    
+                    // Show drop feedback
+                    const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
+                    this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
+                }
             }
         }
+    }
+    
+    showDamageFeedback(damage, x, y, isCritical) {
+        // Convert world coordinates to screen coordinates
+        const screenX = x - this.camera.x;
+        const screenY = y - this.camera.y;
+        
+        const feedback = document.createElement('div');
+        feedback.textContent = `-${damage}`;
+        feedback.style.cssText = `
+            position: fixed;
+            left: ${screenX}px;
+            top: ${screenY}px;
+            color: ${isCritical ? '#e74c3c' : '#ffffff'};
+            font-size: ${isCritical ? '24px' : '18px'};
+            font-weight: ${isCritical ? 'bold' : 'normal'};
+            z-index: 1000;
+            pointer-events: none;
+            animation: floatUpDamage 0.8s ease-out forwards;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
+        `;
+        
+        // Add animation keyframes if not exists
+        if (!document.getElementById('damageFeedbackStyle')) {
+            const style = document.createElement('style');
+            style.id = 'damageFeedbackStyle';
+            style.textContent = `
+                @keyframes floatUpDamage {
+                    0% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-30px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(feedback);
+        
+        // Remove after animation
+        setTimeout(() => {
+            feedback.remove();
+        }, 800);
     }
     
     showDropFeedback(text, color, intensity) {
@@ -275,13 +335,23 @@ export class Game {
     }
     
     render() {
+        // Apply screen shake
+        let shakeX = 0;
+        let shakeY = 0;
+        if (this.screenShake > 0) {
+            shakeX = (Math.random() - 0.5) * this.screenShake;
+            shakeY = (Math.random() - 0.5) * this.screenShake;
+            this.screenShake *= 0.9;
+            if (this.screenShake < 0.5) this.screenShake = 0;
+        }
+        
         // Clear canvas
         this.ctx.fillStyle = '#2c3e50';
         this.ctx.fillRect(0, 0, this.width, this.height);
         
-        // Save context for camera transform
+        // Save context for camera transform and shake
         this.ctx.save();
-        this.ctx.translate(-this.camera.x, -this.camera.y);
+        this.ctx.translate(-this.camera.x + shakeX, -this.camera.y + shakeY);
         
         // Render world
         this.world.render(this.ctx);
@@ -325,6 +395,9 @@ export class Game {
         
         // Update zone display
         this.updateZoneDisplay();
+        
+        // Update pickaxe display
+        this.updatePickaxeDisplay();
     }
     
     updateZoneDisplay() {
@@ -351,6 +424,32 @@ export class Game {
         
         const currentZone = this.world.getCurrentZone();
         zoneElement.textContent = `Zone: ${currentZone.name} | Level: ${this.player.level}`;
+    }
+    
+    updatePickaxeDisplay() {
+        let pickaxeElement = document.getElementById('pickaxeDisplay');
+        
+        if (!pickaxeElement) {
+            pickaxeElement = document.createElement('div');
+            pickaxeElement.id = 'pickaxeDisplay';
+            pickaxeElement.style.cssText = `
+                position: absolute;
+                top: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.9);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                pointer-events: auto;
+            `;
+            document.getElementById('ui').appendChild(pickaxeElement);
+        }
+        
+        const pickaxe = this.player.getPickaxe();
+        pickaxeElement.style.border = `2px solid ${pickaxe.color}`;
+        pickaxeElement.textContent = `${pickaxe.name} | Power: ${pickaxe.miningPower} | Crit: ${(pickaxe.critChance * 100).toFixed(0)}%`;
     }
 }
 

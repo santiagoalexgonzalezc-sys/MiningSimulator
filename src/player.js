@@ -1,3 +1,5 @@
+import { getPickaxe, getNextPickaxe } from './pickaxeData.js';
+
 /**
  * Player class - handles player movement, mining, and stats
  */
@@ -10,17 +12,11 @@ export class Player {
         this.speed = 200;
         this.inventory = inventory;
         
-        // Mining stats
-        this.miningPower = 1;
-        this.miningSpeed = 1;
-        this.criticalChance = 0.05;
-        
         // Economy
         this.money = 0;
         
-        // Pickaxe tier
-        this.pickaxeTier = 0;
-        this.pickaxeNames = ['Wooden', 'Stone', 'Iron', 'Steel', 'Gold', 'Diamond', 'Mythic'];
+        // Pickaxe system
+        this.pickaxeId = 'wooden';
         
         // Level system
         this.level = 1;
@@ -92,15 +88,21 @@ export class Player {
         return distance < 100; // Mining range
     }
     
+    getPickaxe() {
+        return getPickaxe(this.pickaxeId);
+    }
+    
     mine(ore) {
+        const pickaxe = this.getPickaxe();
+        
         // Check if player can mine this ore
-        if (this.miningPower < ore.requiredPower) {
+        if (pickaxe.miningPower < ore.requiredPower) {
             return false;
         }
         
         // Critical hit chance
-        const isCritical = Math.random() < this.criticalChance;
-        const multiplier = isCritical ? 2 : 1;
+        const isCritical = Math.random() < pickaxe.critChance;
+        const multiplier = isCritical ? pickaxe.critMultiplier : 1;
         
         // Add XP based on ore value
         this.addXP(Math.floor(ore.value / 10));
@@ -109,7 +111,8 @@ export class Player {
         return {
             type: ore.type,
             value: ore.value * multiplier,
-            isCritical: isCritical
+            isCritical: isCritical,
+            damage: pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1)
         };
     }
     
@@ -121,38 +124,40 @@ export class Player {
             this.xp -= this.xpToNextLevel;
             this.level++;
             this.xpToNextLevel = Math.floor(this.xpToNextLevel * 1.5);
-            
-            // Bonus stats on level up
-            this.miningPower += 1;
-            this.criticalChance += 0.01;
         }
     }
     
     upgradePickaxe() {
-        if (this.pickaxeTier < this.pickaxeNames.length - 1) {
-            this.pickaxeTier++;
-            this.miningPower += 2;
-            this.miningSpeed += 0.5;
-            this.criticalChance += 0.02;
+        const nextPickaxe = getNextPickaxe(this.pickaxeId);
+        if (!nextPickaxe) {
+            return false; // Already at max tier
+        }
+        
+        if (this.money >= nextPickaxe.cost) {
+            this.money -= nextPickaxe.cost;
+            this.pickaxeId = nextPickaxe.id;
             return true;
         }
+        
         return false;
     }
     
     render(ctx) {
+        const pickaxe = this.getPickaxe();
+        
         // Draw player
         ctx.fillStyle = '#3498db';
         ctx.fillRect(this.x, this.y, this.width, this.height);
         
-        // Draw pickaxe indicator
-        ctx.fillStyle = '#f39c12';
+        // Draw pickaxe indicator with pickaxe color
+        ctx.fillStyle = pickaxe.color;
         ctx.fillRect(this.x + 8, this.y - 10, 16, 8);
         
-        // Draw player name/pickaxe tier
+        // Draw player name/pickaxe
         ctx.fillStyle = '#ffffff';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(this.pickaxeNames[this.pickaxeTier], this.x + this.width / 2, this.y - 15);
+        ctx.fillText(pickaxe.name, this.x + this.width / 2, this.y - 15);
     }
     
     toJSON() {
@@ -160,10 +165,7 @@ export class Player {
             x: this.x,
             y: this.y,
             money: this.money,
-            miningPower: this.miningPower,
-            miningSpeed: this.miningSpeed,
-            criticalChance: this.criticalChance,
-            pickaxeTier: this.pickaxeTier,
+            pickaxeId: this.pickaxeId,
             level: this.level,
             xp: this.xp,
             xpToNextLevel: this.xpToNextLevel
@@ -174,10 +176,7 @@ export class Player {
         this.x = data.x;
         this.y = data.y;
         this.money = data.money;
-        this.miningPower = data.miningPower;
-        this.miningSpeed = data.miningSpeed;
-        this.criticalChance = data.criticalChance;
-        this.pickaxeTier = data.pickaxeTier;
+        this.pickaxeId = data.pickaxeId || 'wooden';
         this.level = data.level || 1;
         this.xp = data.xp || 0;
         this.xpToNextLevel = data.xpToNextLevel || 100;

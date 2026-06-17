@@ -2,7 +2,56 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 3 Features
+## Phase 4 Features
+
+- **Pickaxe Progression System**: 7 upgradeable pickaxes with unique stats
+- **Damage-Based Mining**: Ores have HP, pickaxes deal damage per click
+- **Critical Hit System**: Chance for 2x-4x damage with visual feedback
+- **Screen Shake Effects**: Visual feedback when mining and on critical hits
+- **Pickaxe UI Panel**: Real-time display of current pickaxe stats
+- **Progression Shop UI**: Visual pickaxe tree with costs and locked states
+- **Upgrade Feedback**: Animated popup when upgrading pickaxes
+- **Rock HP Scaling**: Ore health scales with zone and rarity
+
+### Pickaxe Progression
+
+**Wooden Pickaxe** (Free)
+- Power: 1 | Speed: 1.0x | Crit: 5%
+- Basic wooden pickaxe. Slow but reliable.
+
+**Stone Pickaxe** ($100)
+- Power: 2 | Speed: 1.2x | Crit: 7%
+- Sturdier stone pickaxe. Better mining speed.
+
+**Iron Pickaxe** ($500)
+- Power: 4 | Speed: 1.5x | Crit: 10%
+- Durable iron pickaxe. Significant power boost.
+
+**Steel Pickaxe** ($2,000)
+- Power: 7 | Speed: 1.8x | Crit: 12%
+- Reinforced steel pickaxe. Excellent mining efficiency.
+
+**Gold Pickaxe** ($5,000)
+- Power: 12 | Speed: 2.2x | Crit: 15%
+- Golden pickaxe. High power and crit chance.
+
+**Diamond Pickaxe** ($15,000)
+- Power: 20 | Speed: 2.8x | Crit: 18%
+- Diamond pickaxe. Ultimate mining power.
+
+**Mythic Pickaxe** ($50,000)
+- Power: 35 | Speed: 3.5x | Crit: 22%
+- Legendary mythic pickaxe. God-tier mining power.
+
+### Mining Mechanics
+
+- **Damage System**: Click to deal damage equal to pickaxe power
+- **Critical Hits**: Random chance for multiplied damage with red text
+- **HP Scaling**: Ore HP increases in deeper zones and with higher rarity
+- **Visual Feedback**: Damage numbers float up, screen shakes on hits
+- **Progression**: Better pickaxes mine faster and deal more damage
+
+## Phase 3 Features (Retained)
 
 - **Ore Rarity System**: 6 rarity tiers (Common, Uncommon, Rare, Epic, Legendary, Mythic)
 - **Rarity-Based Drop Chances**: Weighted rarity drops per zone (better zones = rarer ores)
@@ -92,11 +141,11 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 1. Open `index.html` in a modern web browser
 2. Use **WASD** or **Arrow Keys** to move the player
 3. Click on ores to mine them (must be within range)
-4. Watch for rarity indicators (glow effects) on rare ores
+4. Watch for damage numbers and critical hit effects
 5. See drop feedback showing ore type and rarity when mining
 6. Walk into the green **SELL ZONE** to sell all ores
 7. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-8. Click **Shop** to buy upgrades with your money
+8. Click **Shop** to upgrade pickaxes and backpack
 9. Click **Save Game** to manually save progress
 
 ## Controls
@@ -105,7 +154,7 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 - **A/←**: Move left
 - **S/↓**: Move down
 - **D/→**: Move right
-- **Mouse Click**: Mine ores
+- **Mouse Click**: Mine ores (deal damage)
 - **Shop Button**: Open upgrade shop
 - **Save Button**: Save game progress
 
@@ -123,6 +172,7 @@ MiningSimulator/
 │   ├── world.js        # World generation and zone management
 │   ├── zone.js         # Zone definitions and properties
 │   ├── oreData.js      # Centralized ore data and rarity system
+│   ├── pickaxeData.js  # Centralized pickaxe data and progression
 │   ├── inventory.js    # Inventory management
 │   ├── shop.js         # Upgrade shop system
 │   └── save.js         # LocalStorage save/load
@@ -136,11 +186,11 @@ MiningSimulator/
 - **Storage**: LocalStorage for persistent saves (under 100 KB)
 - **Zone System**: Data-driven zone definitions for easy expansion
 - **Ore System**: Centralized data-driven ore and rarity system
+- **Pickaxe System**: Centralized data-driven equipment progression
 
 ## Future Phases
 
-This is Phase 3 of a 10-phase development plan. Future phases will include:
-- Equipment progression
+This is Phase 4 of a 10-phase development plan. Future phases will include:
 - Backpack upgrades
 - Quest system
 - Pets system

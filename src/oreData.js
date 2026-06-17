@@ -210,6 +210,7 @@ export function generateOre(zoneId, x, y) {
     const rarity = getRandomRarity(zoneId);
     const oreType = getRandomOreType(zoneId, rarity);
     const value = calculateOreValue(oreType.id, rarity.id, zoneId);
+    const health = calculateOreHP(zoneId, rarity.id, oreType.health);
     
     return {
         x: x,
@@ -223,9 +224,35 @@ export function generateOre(zoneId, x, y) {
         color: oreType.color,
         value: value,
         requiredPower: oreType.requiredPower,
-        health: oreType.health,
-        maxHealth: oreType.health,
+        health: health,
+        maxHealth: health,
         glowColor: rarity.glowColor,
         glowIntensity: rarity.glowIntensity
     };
+}
+
+/**
+ * Calculate ore HP based on zone, rarity, and base health
+ */
+export function calculateOreHP(zoneId, rarityId, baseHealth) {
+    const zoneMultipliers = {
+        surface: 1.0,
+        cave: 1.5,
+        crystal: 2.0,
+        lava: 3.0
+    };
+    
+    const rarityMultipliers = {
+        common: 1.0,
+        uncommon: 1.2,
+        rare: 1.5,
+        epic: 2.0,
+        legendary: 2.5,
+        mythic: 3.5
+    };
+    
+    const zoneMult = zoneMultipliers[zoneId] || 1.0;
+    const rarityMult = rarityMultipliers[rarityId] || 1.0;
+    
+    return Math.floor(baseHealth * zoneMult * rarityMult);
 }
