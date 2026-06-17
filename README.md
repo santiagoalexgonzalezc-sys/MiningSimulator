@@ -426,27 +426,37 @@ Each rebirth grants:
 
 ```
 MiningSimulator/
-├── index.html          # Game entry point
-├── styles.css          # UI styling
+├── index.html              # Game entry point
+├── styles.css              # UI styling
+├── package.json            # Node.js dependencies and test scripts
+├── .babelrc                # Babel configuration for ES6+ support
 ├── src/
-│   ├── main.js         # Entry point initialization
-│   ├── game.js         # Main game loop and coordination
-│   ├── player.js       # Player movement and stats
-│   ├── camera.js       # Camera following system
-│   ├── world.js        # World generation and zone management
-│   ├── zone.js         # Zone definitions and properties
-│   ├── oreData.js      # Centralized ore data and rarity system
-│   ├── pickaxeData.js  # Centralized pickaxe data and progression
-│   ├── inventorySystem.js # Centralized inventory and backpack system
-│   ├── inventory.js    # Inventory management
-│   ├── shop.js         # Upgrade shop system
-│   ├── questSystem.js  # Centralized quest and NPC system
-│   ├── questManager.js # Quest progress tracking and rewards
-│   ├── petSystem.js    # Centralized pet system and definitions
-│   ├── petManager.js   # Pet inventory and bonus management
-│   ├── rebirthSystem.js # Centralized rebirth system and definitions
-│   ├── rebirthManager.js # Rebirth logic and permanent upgrades
-│   └── save.js         # LocalStorage save/load
+│   ├── main.js             # Entry point initialization
+│   ├── game.js             # Main game loop and coordination
+│   ├── player.js           # Player movement and stats
+│   ├── camera.js           # Camera following system
+│   ├── world.js            # World generation and zone management
+│   ├── zone.js             # Zone definitions and properties
+│   ├── oreData.js          # Centralized ore data and rarity system
+│   ├── pickaxeData.js      # Centralized pickaxe data and progression
+│   ├── inventorySystem.js  # Centralized inventory and backpack system
+│   ├── inventory.js        # Inventory management
+│   ├── shop.js             # Upgrade shop system
+│   ├── questSystem.js      # Centralized quest and NPC system
+│   ├── questManager.js     # Quest progress tracking and rewards
+│   ├── petSystem.js        # Centralized pet system and definitions
+│   ├── petManager.js       # Pet inventory and bonus management
+│   ├── rebirthSystem.js    # Centralized rebirth system and definitions
+│   ├── rebirthManager.js   # Rebirth logic and permanent upgrades
+│   └── save.js             # LocalStorage save/load
+├── tests/
+│   ├── README.md            # Test documentation
+│   ├── oreData.test.js     # Ore value and rarity tests
+│   ├── pickaxeData.test.js # Pickaxe progression tests
+│   ├── petSystem.test.js   # Pet bonuses and hatching tests
+│   ├── rebirthSystem.test.js # Rebirth mechanics tests
+│   ├── inventorySystem.test.js # Backpack capacity tests
+│   └── zone.test.js        # Zone unlock requirement tests
 ```
 
 ## Technical Details
@@ -462,6 +472,58 @@ MiningSimulator/
 - **Quest System**: Centralized quest and NPC system with progress tracking
 - **Pet System**: Centralized pet system with rarity, bonuses, and leveling
 - **Rebirth System**: Centralized rebirth system with permanent upgrades and infinite progression
+- **Testing**: Jest unit tests for economy balance verification
+
+## Unit Testing
+
+The project includes comprehensive unit tests to verify economy balance and game mechanics. Tests cover all recently rebalanced systems:
+
+- **oreData.test.js** - Ore value calculations, rarity generation, zone bonuses
+- **pickaxeData.test.js** - Pickaxe progression, damage calculations, scaling
+- **petSystem.test.js** - Pet bonuses, 25% cap enforcement, egg hatching
+- **rebirthSystem.test.js** - Additive rebirth growth, luck capping, upgrade costs
+- **inventorySystem.test.js** - Backpack capacity, slot costs, inventory calculations
+- **zone.test.js** - Zone unlock requirements, progression chain
+
+### Running Tests
+
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Run all tests:
+
+```bash
+npm test
+```
+
+Run tests in watch mode (auto-rerun on file changes):
+
+```bash
+npm run test:watch
+```
+
+Run tests with coverage report:
+
+```bash
+npm run test:coverage
+```
+
+### Test Coverage
+
+The test suite validates economy balance guidelines:
+
+- **Ore Values**: Smooth ~2x progression per tier (Coal 5 → Mythic 320)
+- **Pickaxe Scaling**: 20-50% power growth per upgrade
+- **Pet Bonuses**: Capped at 25% maximum per pet
+- **Rebirth Growth**: Additive linear scaling (not exponential)
+- **Luck System**: Capped at 300% (3.0 multiplier)
+- **Upgrade Costs**: 2.0x exponential scaling to force meaningful choices
+- **Zone Costs**: Balanced for 20-40 min cave, 40-90 min crystal, 90-180 min lava progression
+
+All tests ensure the economy remains balanced as the game evolves.
 
 ## Future Phases
 

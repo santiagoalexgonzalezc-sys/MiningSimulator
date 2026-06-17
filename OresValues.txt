@@ -1,0 +1,16 @@
+Coal                $5
+Iron                $10
+Silver              $20
+Gold                $40
+Emerald             $80
+Diamond             $160
+Ruby                $320
+Mythic Crystal      $640
+
+Void Shard          $1,280
+Celestial Fragment  $2,560
+Starcore            $5,120
+Eternium            $10,240
+
+Quantum Core        $20,480
+Genesis Crystal     $40,960
