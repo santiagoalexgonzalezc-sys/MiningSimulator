@@ -160,7 +160,7 @@ describe('oreData.js', () => {
             const validTypes = ['COAL', 'IRON'];
             for (let i = 0; i < 100; i++) {
                 const oreType = getRandomOreType('surface', RARITY.COMMON);
-                expect(validTypes).toContain(oreType.id);
+                expect(validTypes).toContain(oreType.id.toUpperCase());
             }
         });
 
@@ -168,7 +168,7 @@ describe('oreData.js', () => {
             const validTypes = ['DIAMOND', 'RUBY', 'MYTHIC_ORE'];
             for (let i = 0; i < 100; i++) {
                 const oreType = getRandomOreType('lava', RARITY.MYTHIC);
-                expect(validTypes).toContain(oreType.id);
+                expect(validTypes).toContain(oreType.id.toUpperCase());
             }
         });
     });

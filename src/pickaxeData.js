@@ -52,7 +52,7 @@ export const PICKAXES = {
     GOLD: {
         id: 'gold',
         name: 'Gold Pickaxe',
-        miningPower: 50,
+        miningPower: 48,
         miningSpeed: 1.4,
         critChance: 0.09,
         critMultiplier: 2.4,
@@ -63,7 +63,7 @@ export const PICKAXES = {
     DIAMOND: {
         id: 'diamond',
         name: 'Diamond Pickaxe',
-        miningPower: 75,
+        miningPower: 70,
         miningSpeed: 1.5,
         critChance: 0.10,
         critMultiplier: 2.5,
@@ -74,7 +74,7 @@ export const PICKAXES = {
     MYTHIC: {
         id: 'mythic',
         name: 'Mythic Pickaxe',
-        miningPower: 110,
+        miningPower: 100,
         miningSpeed: 1.6,
         critChance: 0.11,
         critMultiplier: 2.6,

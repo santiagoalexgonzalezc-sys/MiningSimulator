@@ -54,8 +54,8 @@ describe('pickaxeData.js', () => {
             }
         });
 
-        test('mythic pickaxe should have 110 power', () => {
-            expect(PICKAXES.MYTHIC.miningPower).toBe(110);
+        test('mythic pickaxe should have 100 power', () => {
+            expect(PICKAXES.MYTHIC.miningPower).toBe(100);
         });
 
         test('wooden pickaxe should be free', () => {
@@ -142,7 +142,7 @@ describe('pickaxeData.js', () => {
         test('mythic pickaxe should deal high damage on crit', () => {
             const pickaxe = getPickaxe('mythic');
             const damage = calculateMiningDamage(pickaxe, true);
-            expect(damage).toBe(Math.floor(110 * 2.6));
+            expect(damage).toBe(Math.floor(100 * 2.6));
         });
 
         test('should handle wooden pickaxe correctly', () => {

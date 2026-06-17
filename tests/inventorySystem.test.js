@@ -211,7 +211,7 @@ describe('inventorySystem.js', () => {
 
         test('should deny adding if capacity exceeded', () => {
             const items = {
-                coal: { count: 19, rarity: 'common' }
+                coal: { count: 20, rarity: 'common' }
             };
             const capacity = 20;
             expect(canAddItem(items, capacity, 'common')).toBe(false);
@@ -219,10 +219,10 @@ describe('inventorySystem.js', () => {
 
         test('should consider slot cost of new item', () => {
             const items = {
-                coal: { count: 18, rarity: 'common' }
+                coal: { count: 19, rarity: 'common' }
             };
             const capacity = 20;
-            expect(canAddItem(items, capacity, 'rare')).toBe(false); // 18 + 2 = 20
+            expect(canAddItem(items, capacity, 'rare')).toBe(false); // 19 + 2 = 21 > 20
         });
 
         test('should allow adding mythic if enough space', () => {
@@ -266,7 +266,7 @@ describe('inventorySystem.js', () => {
         });
 
         test('backpack progression should not outpace ore value scaling', () => {
-            const firstCost = BACKPACKS.SMALL.cost;
+            const firstCost = BACKPACKS.MEDIUM.cost; // Skip small (0 cost)
             const lastCost = BACKPACKS.MYTHIC.cost;
             const costGrowth = lastCost / firstCost;
             

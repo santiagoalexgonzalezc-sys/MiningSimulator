@@ -163,8 +163,8 @@ describe('rebirthSystem.js', () => {
             const speed10 = calculateRebirthMultiplier(10, 'mining_speed');
             
             // Each rebirth adds 5%
-            expect(speed2 - speed1).toBe(0.05);
-            expect(speed10).toBe(1 + (10 * 0.05));
+            expect(speed2 - speed1).toBeCloseTo(0.05, 5);
+            expect(speed10).toBeCloseTo(1 + (10 * 0.05), 5);
         });
     });
 

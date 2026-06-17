@@ -253,7 +253,7 @@ describe('petSystem.js', () => {
                 if (pet.rarity === 'COMMON') commonCount++;
             }
             
-            expect(commonCount).toBeGreaterThan(iterions * 0.7);
+            expect(commonCount).toBeGreaterThan(iterations * 0.7);
         });
 
         test('legendary egg should have chance for mythic pets', () => {

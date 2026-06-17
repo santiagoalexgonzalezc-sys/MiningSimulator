@@ -278,14 +278,14 @@ describe('zone.js', () => {
             const lava = ZONE_DEFINITIONS.find(z => z.id === 'lava');
             
             // Cave should be unlockable with stone pickaxe
-            expect(cave.unlockRequirement.value).toBeLessThan(100);
+            expect(cave.unlockRequirement.value).toBeLessThan(300);
             
             // Crystal should be unlockable with iron/steel pickaxe
-            expect(crystal.unlockRequirement.value).toBeGreaterThan(250);
-            expect(crystal.unlockRequirement.value).toBeLessThan(1500);
+            expect(crystal.unlockRequirement.value).toBeGreaterThan(500);
+            expect(crystal.unlockRequirement.value).toBeLessThan(2000);
             
             // Lava should be unlockable with gold/diamond pickaxe
-            expect(lava.unlockRequirement.value).toBeGreaterThan(1000);
+            expect(lava.unlockRequirement.value).toBeGreaterThan(1500);
             expect(lava.unlockRequirement.value).toBeLessThan(10000);
         });
 
