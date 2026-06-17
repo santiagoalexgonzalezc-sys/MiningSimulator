@@ -22,6 +22,7 @@ npm install
 ```
 
 This will install:
+
 - `jest` - Testing framework
 - `@babel/preset-env` - Babel preset for ES6+ support
 - `jest-environment-jsdom` - DOM environment (if needed for UI tests)
@@ -29,16 +30,19 @@ This will install:
 ## Running Tests
 
 Run all tests:
+
 ```bash
 npm test
 ```
 
 Run tests in watch mode (auto-rerun on file changes):
+
 ```bash
 npm run test:watch
 ```
 
 Run tests with coverage report:
+
 ```bash
 npm run test:coverage
 ```
