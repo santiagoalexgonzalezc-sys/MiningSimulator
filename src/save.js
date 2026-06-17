@@ -11,6 +11,7 @@ export class SaveSystem {
             player: game.player.toJSON(),
             inventory: game.inventory.toJSON(),
             world: game.world.toJSON(),
+            questManager: game.questManager.toJSON(),
             timestamp: Date.now()
         };
         
@@ -32,6 +33,9 @@ export class SaveSystem {
                 game.player.fromJSON(data.player);
                 game.inventory.fromJSON(data.inventory);
                 game.world.fromJSON(data.world);
+                if (data.questManager) {
+                    game.questManager.fromJSON(data.questManager);
+                }
                 console.log('Game loaded successfully');
                 return true;
             }

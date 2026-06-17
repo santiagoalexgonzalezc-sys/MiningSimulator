@@ -5,9 +5,10 @@ import { BACKPACKS, BACKPACK_ORDER, getNextBackpack } from './inventorySystem.js
  * Shop class - manages upgrades and purchases
  */
 export class Shop {
-    constructor(player, inventory) {
+    constructor(player, inventory, questManager) {
         this.player = player;
         this.inventory = inventory;
+        this.questManager = questManager;
         this.isOpen = false;
     }
     
@@ -177,6 +178,10 @@ export class Shop {
             const success = this.player.upgradePickaxe();
             if (success) {
                 this.showUpgradeFeedback(pickaxe.name);
+                
+                // Update quest progress for upgrading pickaxe
+                this.questManager.updateProgress('upgrade', { type: pickaxe.id });
+                
                 this.renderShop();
             }
         }
@@ -190,6 +195,10 @@ export class Shop {
             this.player.money -= backpack.cost;
             this.inventory.upgradeBackpack();
             this.showUpgradeFeedback(backpack.name);
+            
+            // Update quest progress for upgrading backpack
+            this.questManager.updateProgress('upgrade', { type: backpack.id + '_backpack' });
+            
             this.renderShop();
         }
     }

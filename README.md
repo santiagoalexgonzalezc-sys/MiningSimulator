@@ -2,7 +2,63 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 5 Features
+## Phase 6 Features
+
+- **Quest System**: Structured quest system with objectives and rewards
+- **NPC System**: 3 interactive NPCs (Miner Joe, Gem Collector, Engineer)
+- **Quest Types**: Mine ores, earn money, upgrade pickaxe, reach zones
+- **Quest Progress Tracking**: Real-time progress updates for all quest types
+- **Quest Rewards**: Money and XP rewards for completing quests
+- **NPC Dialogue**: Interactive dialogue system when talking to NPCs
+- **Quest UI Panel**: Real-time display of active quest progress
+- **Quest Save System**: Quest progress saved with game state
+
+### NPCs
+
+**Miner Joe** (Surface Zone)
+- Position: (300, 300)
+- Dialogue: "Hey there, rookie! I can teach you the basics of mining. Check out my quests to get started!"
+- Quests: First Steps, First Earnings, Better Tools
+
+**Gem Collector** (Surface Zone)
+- Position: (800, 600)
+- Dialogue: "I collect rare gems from all over the world. Can you help me find some?"
+- Quests: Rare Collector, Epic Hunter, Legendary Seeker
+
+**Engineer** (Surface Zone)
+- Position: (1200, 900)
+- Dialogue: "I specialize in equipment upgrades. My quests will help you become a master miner!"
+- Quests: Iron Age, Steel Strength, More Space
+
+### Quest Types
+
+**Mine Ore Quests**
+- Mine specific ores (e.g., 50 Coal)
+- Track by ore type or rarity
+- Progress updates when mining
+
+**Earn Money Quests**
+- Earn target amount of money (e.g., $5,000)
+- Progress updates when selling ores
+- Rewards scale with difficulty
+
+**Upgrade Quests**
+- Upgrade to specific pickaxe or backpack
+- Track by equipment type
+- Progress updates when purchasing upgrades
+
+**Zone Quests**
+- Reach specific mining zones
+- Progress updates when entering zones
+- Encourages exploration
+
+### Quest Rewards
+
+- **Money**: Direct cash rewards for completing quests
+- **XP**: Experience points to level up player
+- **Progression**: Quests guide players through game systems
+
+## Phase 5 Features (Retained)
 
 - **Slot-Based Inventory System**: Each ore takes slots based on rarity (Common=1, Uncommon=1, Rare=2, Epic=3, Legendary=4, Mythic=5)
 - **Backpack Progression**: 5 upgradeable backpacks with increasing capacity
@@ -191,13 +247,14 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 1. Open `index.html` in a modern web browser
 2. Use **WASD** or **Arrow Keys** to move the player
 3. Click on ores to mine them (must be within range)
-4. Watch for damage numbers and critical hit effects
-5. See drop feedback showing ore type and rarity when mining
-6. Manage backpack capacity - rare ores take more slots
-7. Walk into the green **SELL ZONE** to sell all ores
-8. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-9. Click **Shop** to upgrade pickaxes and backpack
-10. Click **Save Game** to manually save progress
+4. Click on NPCs to talk to them and accept quests
+5. Watch for damage numbers and critical hit effects
+6. See drop feedback showing ore type and rarity when mining
+7. Manage backpack capacity - rare ores take more slots
+8. Walk into the green **SELL ZONE** to sell all ores
+9. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
+10. Click **Shop** to upgrade pickaxes and backpack
+11. Click **Save Game** to manually save progress
 
 ## Controls
 
@@ -205,7 +262,7 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 - **A/←**: Move left
 - **S/↓**: Move down
 - **D/→**: Move right
-- **Mouse Click**: Mine ores (deal damage)
+- **Mouse Click**: Mine ores (deal damage) or interact with NPCs
 - **Shop Button**: Open upgrade shop
 - **Save Button**: Save game progress
 
@@ -227,6 +284,8 @@ MiningSimulator/
 │   ├── inventorySystem.js # Centralized inventory and backpack system
 │   ├── inventory.js    # Inventory management
 │   ├── shop.js         # Upgrade shop system
+│   ├── questSystem.js  # Centralized quest and NPC system
+│   ├── questManager.js # Quest progress tracking and rewards
 │   └── save.js         # LocalStorage save/load
 ```
 
@@ -240,11 +299,11 @@ MiningSimulator/
 - **Ore System**: Centralized data-driven ore and rarity system
 - **Pickaxe System**: Centralized data-driven equipment progression
 - **Inventory System**: Centralized slot-based inventory with backpack progression
+- **Quest System**: Centralized quest and NPC system with progress tracking
 
 ## Future Phases
 
-This is Phase 5 of a 10-phase development plan. Future phases will include:
-- Quest system
+This is Phase 6 of a 10-phase development plan. Future phases will include:
 - Pets system
 - Rebirth system
 - Bosses and events

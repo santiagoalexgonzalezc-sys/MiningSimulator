@@ -4,6 +4,7 @@ import { World } from './world.js';
 import { Inventory } from './inventory.js';
 import { Shop } from './shop.js';
 import { SaveSystem } from './save.js';
+import { QuestManager } from './questManager.js';
 
 /**
  * Main Game class - manages the game loop and coordinates all systems
@@ -25,6 +26,7 @@ export class Game {
         this.inventory = null;
         this.shop = null;
         this.saveSystem = null;
+        this.questManager = null;
         
         // Input state
         this.keys = {};
@@ -49,7 +51,8 @@ export class Game {
         this.player = new Player(400, 300, this.inventory);
         this.camera = new Camera(this.player);
         this.world = new World(2000, 2000);
-        this.shop = new Shop(this.player, this.inventory);
+        this.questManager = new QuestManager(this.player);
+        this.shop = new Shop(this.player, this.inventory, this.questManager);
         
         // Load saved game if exists
         this.saveSystem.load(this);
@@ -150,6 +153,13 @@ export class Game {
         const worldX = this.mouse.x + this.camera.x;
         const worldY = this.mouse.y + this.camera.y;
         
+        // Check if clicking on an NPC
+        const npc = this.world.getNPCAt(worldX, worldY);
+        if (npc) {
+            this.showNPCDialogue(npc);
+            return;
+        }
+        
         // Check if clicking on an ore
         const ore = this.world.getOreAt(worldX, worldY);
         if (ore && this.player.canMine(ore)) {
@@ -180,6 +190,9 @@ export class Game {
                     if (added) {
                         this.world.removeOre(ore);
                         
+                        // Update quest progress for mining ores
+                        this.questManager.updateProgress('mine', { oreType: ore.type, rarity: ore.rarity });
+                        
                         // Show drop feedback
                         const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
                         this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
@@ -187,6 +200,47 @@ export class Game {
                 }
             }
         }
+    }
+    
+    showNPCDialogue(npc) {
+        const dialogue = document.createElement('div');
+        dialogue.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            border: 2px solid ${npc.color};
+            min-width: 300px;
+            max-width: 500px;
+        `;
+        
+        let html = `<h2 style="color: ${npc.color}; margin-top: 0;">${npc.name}</h2>`;
+        html += `<p style="margin-bottom: 15px;">${npc.dialogue}</p>`;
+        
+        // Show available quests
+        html += '<h3 style="margin-bottom: 10px;">Available Quests:</h3>';
+        const acceptedQuests = this.questManager.acceptNPCQuests(npc.id);
+        
+        if (acceptedQuests.length > 0) {
+            html += '<ul style="margin: 0;">';
+            for (const quest of acceptedQuests) {
+                html += `<li style="margin-bottom: 5px;">${quest.title}: ${quest.description}</li>`;
+            }
+            html += '</ul>';
+            html += '<p style="color: #27ae60; margin-top: 10px;">Quests accepted!</p>';
+        } else {
+            html += '<p style="color: #95a5a6;">No new quests available.</p>';
+        }
+        
+        html += '<button onclick="this.parentElement.remove()" style="margin-top: 15px; padding: 8px 16px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px;">Close</button>';
+        
+        dialogue.innerHTML = html;
+        document.body.appendChild(dialogue);
     }
     
     showBackpackFullWarning() {
@@ -324,6 +378,9 @@ export class Game {
             const total = this.inventory.sellAll();
             if (total > 0) {
                 this.player.money += total;
+                
+                // Update quest progress for earning money
+                this.questManager.updateProgress('earn_money', { amount: total });
             }
         }
     }
@@ -337,6 +394,9 @@ export class Game {
                 // Switch zones
                 if (this.world.switchZone(targetZoneId, this.player)) {
                     this.showZoneMessage(`Entered ${targetZone.name}`);
+                    
+                    // Update quest progress for reaching zones
+                    this.questManager.updateProgress('zone_change', { zoneId: targetZoneId });
                 }
             } else {
                 // Try to unlock
@@ -446,6 +506,9 @@ export class Game {
         
         // Update pickaxe display
         this.updatePickaxeDisplay();
+        
+        // Update quest display
+        this.updateQuestDisplay();
     }
     
     updateZoneDisplay() {
@@ -498,6 +561,37 @@ export class Game {
         const pickaxe = this.player.getPickaxe();
         pickaxeElement.style.border = `2px solid ${pickaxe.color}`;
         pickaxeElement.textContent = `${pickaxe.name} | Power: ${pickaxe.miningPower} | Crit: ${(pickaxe.critChance * 100).toFixed(0)}%`;
+    }
+    
+    updateQuestDisplay() {
+        let questElement = document.getElementById('questDisplay');
+        
+        if (!questElement) {
+            questElement = document.createElement('div');
+            questElement.id = 'questDisplay';
+            questElement.style.cssText = `
+                position: absolute;
+                top: 90px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.9);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                pointer-events: auto;
+                border: 2px solid #9B59B6;
+            `;
+            document.getElementById('ui').appendChild(questElement);
+        }
+        
+        const activeQuests = this.questManager.getActiveQuests();
+        if (activeQuests.length === 0) {
+            questElement.textContent = 'No active quests';
+        } else {
+            const quest = activeQuests[0];
+            questElement.textContent = `${quest.title}: ${quest.progress}/${quest.required}`;
+        }
     }
 }
 

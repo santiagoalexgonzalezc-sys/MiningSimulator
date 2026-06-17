@@ -1,4 +1,5 @@
 import { Zone, ZONE_DEFINITIONS } from './zone.js';
+import { NPCS } from './questSystem.js';
 
 /**
  * World class - manages the game world, ores, and zones
@@ -9,6 +10,7 @@ export class World {
         this.height = height;
         this.ores = [];
         this.maxOres = 50;
+        this.npcs = [];
         
         // Define sell zone
         this.sellZone = {
@@ -24,6 +26,9 @@ export class World {
         this.currentZone = null;
         this.initializeZones();
         
+        // Initialize NPCs
+        this.initializeNPCs();
+        
         // Spawn initial ores
         this.spawnOres();
     }
@@ -35,6 +40,17 @@ export class World {
             this.zones.set(def.id, zone);
         }
         this.currentZone = this.zones.get('surface');
+    }
+    
+    initializeNPCs() {
+        for (const npcId in NPCS) {
+            const npc = NPCS[npcId];
+            this.npcs.push({
+                ...npc,
+                width: 40,
+                height: 40
+            });
+        }
     }
     
     spawnOres() {
@@ -126,6 +142,9 @@ export class World {
         for (const ore of this.ores) {
             this.drawOre(ctx, ore);
         }
+        
+        // Draw NPCs
+        this.drawNPCs(ctx);
     }
     
     drawOre(ctx, ore) {
@@ -229,6 +248,35 @@ export class World {
             ctx.font = '10px Arial';
             ctx.fillText(targetZone.unlockMessage, portal.x, portal.y + 20);
         }
+    }
+    
+    drawNPCs(ctx) {
+        for (const npc of this.npcs) {
+            // Draw NPC body
+            ctx.fillStyle = npc.color;
+            ctx.fillRect(npc.position.x, npc.position.y, npc.width, npc.height);
+            
+            // Draw NPC border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(npc.position.x, npc.position.y, npc.width, npc.height);
+            
+            // Draw NPC name
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(npc.name, npc.position.x + npc.width / 2, npc.position.y - 10);
+        }
+    }
+    
+    getNPCAt(x, y) {
+        for (const npc of this.npcs) {
+            if (x >= npc.position.x && x <= npc.position.x + npc.width &&
+                y >= npc.position.y && y <= npc.position.y + npc.height) {
+                return npc;
+            }
+        }
+        return null;
     }
     
     checkPortalCollision(player) {
