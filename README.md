@@ -2,7 +2,57 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 4 Features
+## Phase 5 Features
+
+- **Slot-Based Inventory System**: Each ore takes slots based on rarity (Common=1, Uncommon=1, Rare=2, Epic=3, Legendary=4, Mythic=5)
+- **Backpack Progression**: 5 upgradeable backpacks with increasing capacity
+- **Capacity Management**: Visual capacity bar with color warnings (green → yellow → red)
+- **Backpack Full Warning**: Popup warning when attempting to mine with full inventory
+- **Strategic Inventory**: Players must manage space and decide which ores to keep
+- **Backpack Shop UI**: Visual backpack progression tree with costs and locked states
+- **Inventory Slot Display**: Shows total slots used per item type
+- **Save System**: Backpack level and capacity saved with backward compatibility
+
+### Backpack Progression
+
+**Small Backpack** (Free)
+- Capacity: 20 slots
+- Basic backpack for starting miners.
+
+**Medium Backpack** ($200)
+- Capacity: 40 slots
+- Spacious backpack for serious mining.
+
+**Large Backpack** ($1,000)
+- Capacity: 75 slots
+- Large backpack for extended mining sessions.
+
+**Epic Backpack** ($5,000)
+- Capacity: 120 slots
+- Epic backpack for professional miners.
+
+**Mythic Backpack** ($25,000)
+- Capacity: 200 slots
+- Legendary backpack with massive capacity.
+
+### Slot Costs by Rarity
+
+**Common**: 1 slot
+**Uncommon**: 1 slot
+**Rare**: 2 slots
+**Epic**: 3 slots
+**Legendary**: 4 slots
+**Mythic**: 5 slots
+
+### Inventory Management
+
+- **Capacity Bar**: Visual indicator showing used vs total slots
+- **Color Warnings**: Green (<70%), Yellow (70-89%), Red (90%+)
+- **Slot Display**: Each item shows total slots used
+- **Full Prevention**: Cannot mine when backpack is full
+- **Upgrade Path**: Must upgrade backpack to carry more valuable ores
+
+## Phase 4 Features (Retained)
 
 - **Pickaxe Progression System**: 7 upgradeable pickaxes with unique stats
 - **Damage-Based Mining**: Ores have HP, pickaxes deal damage per click
@@ -143,10 +193,11 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 3. Click on ores to mine them (must be within range)
 4. Watch for damage numbers and critical hit effects
 5. See drop feedback showing ore type and rarity when mining
-6. Walk into the green **SELL ZONE** to sell all ores
-7. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-8. Click **Shop** to upgrade pickaxes and backpack
-9. Click **Save Game** to manually save progress
+6. Manage backpack capacity - rare ores take more slots
+7. Walk into the green **SELL ZONE** to sell all ores
+8. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
+9. Click **Shop** to upgrade pickaxes and backpack
+10. Click **Save Game** to manually save progress
 
 ## Controls
 
@@ -173,6 +224,7 @@ MiningSimulator/
 │   ├── zone.js         # Zone definitions and properties
 │   ├── oreData.js      # Centralized ore data and rarity system
 │   ├── pickaxeData.js  # Centralized pickaxe data and progression
+│   ├── inventorySystem.js # Centralized inventory and backpack system
 │   ├── inventory.js    # Inventory management
 │   ├── shop.js         # Upgrade shop system
 │   └── save.js         # LocalStorage save/load
@@ -187,11 +239,11 @@ MiningSimulator/
 - **Zone System**: Data-driven zone definitions for easy expansion
 - **Ore System**: Centralized data-driven ore and rarity system
 - **Pickaxe System**: Centralized data-driven equipment progression
+- **Inventory System**: Centralized slot-based inventory with backpack progression
 
 ## Future Phases
 
-This is Phase 4 of a 10-phase development plan. Future phases will include:
-- Backpack upgrades
+This is Phase 5 of a 10-phase development plan. Future phases will include:
 - Quest system
 - Pets system
 - Rebirth system

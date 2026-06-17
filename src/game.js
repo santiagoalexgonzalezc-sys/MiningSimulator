@@ -168,17 +168,65 @@ export class Game {
             
             // Check if ore is destroyed
             if (ore.health <= 0) {
+                // Check if inventory can add the ore
+                if (!this.inventory.canAdd(ore.rarity)) {
+                    this.showBackpackFullWarning();
+                    return;
+                }
+                
                 const mined = this.player.mine(ore);
                 if (mined) {
-                    this.inventory.add(ore.type, ore.value, ore.rarity);
-                    this.world.removeOre(ore);
-                    
-                    // Show drop feedback
-                    const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
-                    this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
+                    const added = this.inventory.add(ore.type, ore.value, ore.rarity);
+                    if (added) {
+                        this.world.removeOre(ore);
+                        
+                        // Show drop feedback
+                        const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
+                        this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
+                    }
                 }
             }
         }
+    }
+    
+    showBackpackFullWarning() {
+        const warning = document.createElement('div');
+        warning.textContent = 'Backpack Full! Sell ores or upgrade backpack.';
+        warning.style.cssText = `
+            position: fixed;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(231, 76, 60, 0.95);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 1000;
+            border: 2px solid #c0392b;
+            text-align: center;
+            animation: pulse 0.5s ease-in-out;
+        `;
+        
+        if (!document.getElementById('backpackWarningStyle')) {
+            const style = document.createElement('style');
+            style.id = 'backpackWarningStyle';
+            style.textContent = `
+                @keyframes pulse {
+                    0% { transform: translateX(-50%) scale(1); }
+                    50% { transform: translateX(-50%) scale(1.1); }
+                    100% { transform: translateX(-50%) scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(warning);
+        
+        setTimeout(() => {
+            warning.remove();
+        }, 2000);
     }
     
     showDamageFeedback(damage, x, y, isCritical) {

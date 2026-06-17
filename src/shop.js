@@ -1,4 +1,5 @@
 import { PICKAXES, PICKAXE_ORDER, getNextPickaxe } from './pickaxeData.js';
+import { BACKPACKS, BACKPACK_ORDER, getNextBackpack } from './inventorySystem.js';
 
 /**
  * Shop class - manages upgrades and purchases
@@ -110,20 +111,57 @@ export class Shop {
         html += '</div>';
         
         // Backpack Upgrade
-        html += '<h3 style="margin-top: 20px;">Backpack Upgrade</h3>';
-        const backpackCost = 50;
-        const canAffordBackpack = this.player.money >= backpackCost;
-        html += `
-            <div style="margin-top: 10px; padding: 12px; background: ${canAffordBackpack ? '#34495e' : '#1a252f'}; border-radius: 6px;">
-                <h4>Upgrade Backpack (+25 capacity)</h4>
-                <p>Current: ${this.inventory.used}/${this.inventory.capacity}</p>
-                <button onclick="game.shop.purchaseBackpack()" 
-                        ${canAffordBackpack ? '' : 'disabled'}
-                        style="padding: 8px 16px; cursor: ${canAffordBackpack ? 'pointer' : 'not-allowed'}; margin-top: 5px;">
-                    $${backpackCost}
-                </button>
-            </div>
-        `;
+        html += '<h3 style="margin-top: 20px;">Backpack Progression</h3>';
+        const nextBackpack = getNextBackpack(this.inventory.backpackId);
+        
+        html += '<div style="margin-top: 10px;">';
+        
+        for (const backpackId of BACKPACK_ORDER) {
+            const backpack = BACKPACKS[backpackId.toUpperCase()];
+            const isCurrent = backpack.id === this.inventory.backpackId;
+            const isNext = nextBackpack && backpack.id === nextBackpack.id;
+            const isLocked = BACKPACK_ORDER.indexOf(backpack.id) > BACKPACK_ORDER.indexOf(this.inventory.backpackId);
+            const canAfford = this.player.money >= backpack.cost;
+            
+            let bgColor = '#1a252f';
+            let borderColor = '#34495e';
+            
+            if (isCurrent) {
+                bgColor = backpack.color + '33';
+                borderColor = backpack.color;
+            } else if (isNext && canAfford) {
+                bgColor = '#27ae6033';
+                borderColor = '#27ae60';
+            } else if (isNext) {
+                bgColor = '#e74c3c33';
+                borderColor = '#e74c3c';
+            }
+            
+            html += `
+                <div style="margin-bottom: 10px; padding: 12px; background: ${bgColor}; border: 2px solid ${borderColor}; border-radius: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="color: ${backpack.color}; margin: 0;">${backpack.name} ${isCurrent ? '(Equipped)' : ''}</h4>
+                            <p style="margin: 5px 0; font-size: 12px;">Capacity: ${backpack.capacity} slots</p>
+                            <p style="margin: 0; font-size: 11px; color: #95a5a6;">${backpack.description}</p>
+                        </div>
+                        ${isNext ? `
+                            <button onclick="game.shop.purchaseBackpack('${backpack.id}')" 
+                                    ${canAfford ? '' : 'disabled'}
+                                    style="padding: 8px 16px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; background: ${canAfford ? '#27ae60' : '#7f8c8d'}; color: white; border: none; border-radius: 4px;">
+                                $${backpack.cost}
+                            </button>
+                        ` : isLocked ? `
+                            <span style="color: #7f8c8d; font-size: 12px;">Locked</span>
+                        ` : `
+                            <span style="color: #27ae60; font-size: 12px;">✓ Owned</span>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
         
         html += '<button onclick="game.shop.close()" style="margin-top: 20px; padding: 10px 20px; width: 100%;">Close</button>';
         
@@ -144,11 +182,14 @@ export class Shop {
         }
     }
     
-    purchaseBackpack() {
-        const cost = 50;
-        if (this.player.money >= cost) {
-            this.player.money -= cost;
-            this.inventory.capacity += 25;
+    purchaseBackpack(backpackId) {
+        const backpack = BACKPACKS[backpackId.toUpperCase()];
+        if (!backpack) return;
+        
+        if (this.player.money >= backpack.cost) {
+            this.player.money -= backpack.cost;
+            this.inventory.upgradeBackpack();
+            this.showUpgradeFeedback(backpack.name);
             this.renderShop();
         }
     }
