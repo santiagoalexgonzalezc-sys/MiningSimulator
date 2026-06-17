@@ -70,8 +70,8 @@ export const ZONE_DEFINITIONS = [
         startPosition: { x: 100, y: 100 },
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'crystal',
-        unlockRequirement: { type: 'money', value: 500 },
-        unlockMessage: 'Requires $500 to unlock'
+        unlockRequirement: { type: 'money', value: 250 },
+        unlockMessage: 'Requires $250 to unlock'
     },
     {
         id: 'crystal',
@@ -82,8 +82,8 @@ export const ZONE_DEFINITIONS = [
         startPosition: { x: 100, y: 100 },
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'lava',
-        unlockRequirement: { type: 'money', value: 2000 },
-        unlockMessage: 'Requires $2000 to unlock'
+        unlockRequirement: { type: 'money', value: 1000 },
+        unlockMessage: 'Requires $1000 to unlock'
     },
     {
         id: 'lava',
@@ -94,7 +94,7 @@ export const ZONE_DEFINITIONS = [
         startPosition: { x: 100, y: 100 },
         portalPosition: { x: 1800, y: 900 },
         portalTarget: 'surface',
-        unlockRequirement: { type: 'money', value: 5000 },
-        unlockMessage: 'Requires $5000 to unlock'
+        unlockRequirement: { type: 'money', value: 2500 },
+        unlockMessage: 'Requires $2500 to unlock'
     }
 ];

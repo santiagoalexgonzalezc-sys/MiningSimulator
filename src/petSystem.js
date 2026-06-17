@@ -14,31 +14,31 @@ export const PET_RARITY = {
     UNCOMMON: {
         name: 'Uncommon',
         color: '#27ae60',
-        bonusMultiplier: 1.2,
+        bonusMultiplier: 1.0,
         maxLevel: 15
     },
     RARE: {
         name: 'Rare',
         color: '#3498db',
-        bonusMultiplier: 1.5,
+        bonusMultiplier: 1.0,
         maxLevel: 20
     },
     EPIC: {
         name: 'Epic',
         color: '#9b59b6',
-        bonusMultiplier: 2.0,
+        bonusMultiplier: 1.0,
         maxLevel: 25
     },
     LEGENDARY: {
         name: 'Legendary',
         color: '#f39c12',
-        bonusMultiplier: 3.0,
+        bonusMultiplier: 1.0,
         maxLevel: 30
     },
     MYTHIC: {
         name: 'Mythic',
         color: '#e74c3c',
-        bonusMultiplier: 5.0,
+        bonusMultiplier: 1.0,
         maxLevel: 50
     }
 };
@@ -70,7 +70,7 @@ export const PETS = {
         rarity: 'COMMON',
         description: 'A small spark that increases ore value.',
         bonusType: PET_BONUS_TYPES.ORE_VALUE,
-        baseBonus: 0.03,
+        baseBonus: 0.05,
         emoji: '⚡'
     },
     
@@ -81,7 +81,7 @@ export const PETS = {
         rarity: 'UNCOMMON',
         description: 'A coal creature that boosts XP gain.',
         bonusType: PET_BONUS_TYPES.XP_GAIN,
-        baseBonus: 0.05,
+        baseBonus: 0.10,
         emoji: '⬛'
     },
     GEMMY: {
@@ -101,7 +101,7 @@ export const PETS = {
         rarity: 'RARE',
         description: 'A mystical fox that significantly boosts mining speed.',
         bonusType: PET_BONUS_TYPES.MINING_SPEED,
-        baseBonus: 0.10,
+        baseBonus: 0.15,
         emoji: '🦊'
     },
     GOLDENGOLEM: {
@@ -110,7 +110,7 @@ export const PETS = {
         rarity: 'RARE',
         description: 'A golden construct that greatly increases ore value.',
         bonusType: PET_BONUS_TYPES.ORE_VALUE,
-        baseBonus: 0.08,
+        baseBonus: 0.15,
         emoji: '🗿'
     },
     
@@ -121,7 +121,7 @@ export const PETS = {
         rarity: 'EPIC',
         description: 'A young dragon that massively boosts XP gain.',
         bonusType: PET_BONUS_TYPES.XP_GAIN,
-        baseBonus: 0.15,
+        baseBonus: 0.20,
         emoji: '🐉'
     },
     PHOENIX: {
@@ -130,7 +130,7 @@ export const PETS = {
         rarity: 'EPIC',
         description: 'A mythical bird that increases crit chance significantly.',
         bonusType: PET_BONUS_TYPES.CRIT_CHANCE,
-        baseBonus: 0.05,
+        baseBonus: 0.03,
         emoji: '🔥'
     },
     
@@ -141,7 +141,7 @@ export const PETS = {
         rarity: 'LEGENDARY',
         description: 'A cosmic bear with incredible mining speed.',
         bonusType: PET_BONUS_TYPES.MINING_SPEED,
-        baseBonus: 0.20,
+        baseBonus: 0.25,
         emoji: '🐻'
     },
     RAINBOWUNICORN: {
@@ -150,7 +150,7 @@ export const PETS = {
         rarity: 'LEGENDARY',
         description: 'A magical unicorn that maximizes ore value.',
         bonusType: PET_BONUS_TYPES.ORE_VALUE,
-        baseBonus: 0.15,
+        baseBonus: 0.25,
         emoji: '🦄'
     },
     
@@ -161,7 +161,7 @@ export const PETS = {
         rarity: 'MYTHIC',
         description: 'A legendary dragon from the stars. Ultimate power.',
         bonusType: PET_BONUS_TYPES.MINING_SPEED,
-        baseBonus: 0.35,
+        baseBonus: 0.25,
         emoji: '🌟'
     },
     COSMICPHOENIX: {
@@ -181,7 +181,7 @@ export const EGGS = {
         id: 'common_egg',
         name: 'Common Egg',
         rarity: 'COMMON',
-        cost: 100,
+        cost: 50,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.8,
@@ -196,7 +196,7 @@ export const EGGS = {
         id: 'uncommon_egg',
         name: 'Uncommon Egg',
         rarity: 'UNCOMMON',
-        cost: 500,
+        cost: 250,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.5,
@@ -211,7 +211,7 @@ export const EGGS = {
         id: 'rare_egg',
         name: 'Rare Egg',
         rarity: 'RARE',
-        cost: 2000,
+        cost: 1000,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.2,
@@ -226,7 +226,7 @@ export const EGGS = {
         id: 'epic_egg',
         name: 'Epic Egg',
         rarity: 'EPIC',
-        cost: 10000,
+        cost: 5000,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0,
@@ -241,7 +241,7 @@ export const EGGS = {
         id: 'legendary_egg',
         name: 'Legendary Egg',
         rarity: 'LEGENDARY',
-        cost: 50000,
+        cost: 25000,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0,
@@ -280,8 +280,10 @@ export function getRarityInfo(rarity) {
  */
 export function calculatePetBonus(pet, level) {
     const rarityInfo = getRarityInfo(pet.rarity);
-    const levelBonus = 1 + (level - 1) * 0.05; // 5% increase per level
-    return pet.baseBonus * rarityInfo.bonusMultiplier * levelBonus;
+    const levelBonus = 1 + (level - 1) * 0.02; // 2% increase per level
+    let bonus = pet.baseBonus * rarityInfo.bonusMultiplier * levelBonus;
+    // Cap at 25% maximum bonus per pet
+    return Math.min(bonus, 0.25);
 }
 
 /**

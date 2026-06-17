@@ -27,7 +27,7 @@ export const BACKPACKS = {
         id: 'medium',
         name: 'Medium Backpack',
         capacity: 40,
-        cost: 200,
+        cost: 100,
         color: '#A0522D',
         description: 'Spacious backpack for serious mining.'
     },
@@ -35,7 +35,7 @@ export const BACKPACKS = {
         id: 'large',
         name: 'Large Backpack',
         capacity: 75,
-        cost: 1000,
+        cost: 500,
         color: '#CD853F',
         description: 'Large backpack for extended mining sessions.'
     },
@@ -43,7 +43,7 @@ export const BACKPACKS = {
         id: 'epic',
         name: 'Epic Backpack',
         capacity: 120,
-        cost: 5000,
+        cost: 2500,
         color: '#DAA520',
         description: 'Epic backpack for professional miners.'
     },
@@ -51,7 +51,7 @@ export const BACKPACKS = {
         id: 'mythic',
         name: 'Mythic Backpack',
         capacity: 200,
-        cost: 25000,
+        cost: 12500,
         color: '#FFD700',
         description: 'Legendary backpack with massive capacity.'
     }

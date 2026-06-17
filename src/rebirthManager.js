@@ -179,6 +179,8 @@ export class RebirthManager {
                 break;
             case 'luck':
                 multiplier += this.getUpgradeEffect('ORE_RARITY_LUCK');
+                // Cap total luck at 300% (3.0 multiplier)
+                multiplier = Math.min(multiplier, 3.0);
                 break;
             case 'backpack_capacity':
                 multiplier += this.getUpgradeEffect('BACKPACK_CAPACITY_MULTIPLIER');

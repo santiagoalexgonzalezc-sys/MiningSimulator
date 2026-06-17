@@ -66,7 +66,7 @@ export const ORE_TYPES = {
     COAL: {
         id: 'coal',
         name: 'Coal',
-        baseValue: 10,
+        baseValue: 5,
         requiredPower: 1,
         health: 3,
         color: '#2c3e50',
@@ -75,7 +75,7 @@ export const ORE_TYPES = {
     IRON: {
         id: 'iron',
         name: 'Iron',
-        baseValue: 25,
+        baseValue: 10,
         requiredPower: 2,
         health: 5,
         color: '#95a5a6',
@@ -84,7 +84,7 @@ export const ORE_TYPES = {
     GOLD: {
         id: 'gold',
         name: 'Gold',
-        baseValue: 50,
+        baseValue: 20,
         requiredPower: 3,
         health: 8,
         color: '#f1c40f',
@@ -93,7 +93,7 @@ export const ORE_TYPES = {
     DIAMOND: {
         id: 'diamond',
         name: 'Diamond',
-        baseValue: 100,
+        baseValue: 40,
         requiredPower: 5,
         health: 12,
         color: '#3498db',
@@ -102,7 +102,7 @@ export const ORE_TYPES = {
     EMERALD: {
         id: 'emerald',
         name: 'Emerald',
-        baseValue: 150,
+        baseValue: 80,
         requiredPower: 6,
         health: 15,
         color: '#27ae60',
@@ -111,7 +111,7 @@ export const ORE_TYPES = {
     RUBY: {
         id: 'ruby',
         name: 'Ruby',
-        baseValue: 200,
+        baseValue: 160,
         requiredPower: 7,
         health: 18,
         color: '#e74c3c',
@@ -120,7 +120,7 @@ export const ORE_TYPES = {
     MYTHIC_ORE: {
         id: 'mythic_ore',
         name: 'Mythic',
-        baseValue: 500,
+        baseValue: 320,
         requiredPower: 10,
         health: 25,
         color: '#9b59b6',
