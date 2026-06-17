@@ -31,6 +31,14 @@ export class SaveSystem {
             const saveData = localStorage.getItem(this.saveKey);
             if (saveData) {
                 const data = JSON.parse(saveData);
+                
+                // Check if save data has petManager - if not, it's an old save
+                if (!data.petManager) {
+                    console.log('Old save detected, clearing incompatible save');
+                    this.clear();
+                    return false;
+                }
+                
                 game.player.fromJSON(data.player);
                 game.inventory.fromJSON(data.inventory);
                 game.world.fromJSON(data.world);
