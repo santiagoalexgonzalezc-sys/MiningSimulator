@@ -115,7 +115,7 @@ export const PETS = {
     },
     
     // Epic pets
-    DRAGONWHelp: {
+    DRAGONWHELP: {
         id: 'dragonwhelp',
         name: 'Dragon Whelp',
         rarity: 'EPIC',
