@@ -4,13 +4,14 @@ import { getPickaxe, getNextPickaxe } from './pickaxeData.js';
  * Player class - handles player movement, mining, and stats
  */
 export class Player {
-    constructor(x, y, inventory) {
+    constructor(x, y, inventory, petManager) {
         this.x = x;
         this.y = y;
         this.width = 32;
         this.height = 32;
         this.speed = 200;
         this.inventory = inventory;
+        this.petManager = petManager;
         
         // Economy
         this.money = 0;
@@ -117,7 +118,9 @@ export class Player {
     }
     
     addXP(amount) {
-        this.xp += amount;
+        // Apply pet bonus to XP gain
+        const xpMultiplier = this.petManager ? this.petManager.getXPMultiplier() : 1;
+        this.xp += amount * xpMultiplier;
         
         // Check for level up
         while (this.xp >= this.xpToNextLevel) {

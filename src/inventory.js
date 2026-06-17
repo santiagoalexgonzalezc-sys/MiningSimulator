@@ -4,10 +4,11 @@ import { getSlotCost, calculateUsedSlots, canAddItem, getBackpack, getNextBackpa
  * Inventory class - manages player inventory and items
  */
 export class Inventory {
-    constructor() {
+    constructor(petManager) {
         this.items = {};
         this.backpackId = 'small';
         this.backpack = getBackpack(this.backpackId);
+        this.petManager = petManager;
     }
     
     add(type, value, rarity = 'Common') {
@@ -42,8 +43,12 @@ export class Inventory {
     
     sellAll() {
         let total = 0;
+        
+        // Apply pet bonus to ore value
+        const oreValueMultiplier = this.petManager ? this.petManager.getOreValueMultiplier() : 1;
+        
         for (const type in this.items) {
-            total += this.items[type].count * this.items[type].value;
+            total += this.items[type].count * this.items[type].value * oreValueMultiplier;
         }
         this.items = {};
         return total;
@@ -63,7 +68,12 @@ export class Inventory {
     }
     
     getCapacity() {
-        return this.backpack.capacity;
+        const baseCapacity = this.backpack.capacity;
+        
+        // Apply pet bonus to backpack capacity
+        const capacityBonus = this.petManager ? this.petManager.getBackpackCapacityBonus() : 0;
+        
+        return Math.floor(baseCapacity * (1 + capacityBonus));
     }
     
     getUsedSlots() {
@@ -71,15 +81,15 @@ export class Inventory {
     }
     
     canAdd(rarity) {
-        return canAddItem(this.items, this.backpack.capacity, rarity);
+        return canAddItem(this.items, this.getCapacity(), rarity);
     }
     
     isFull() {
-        return this.getUsedSlots() >= this.backpack.capacity;
+        return this.getUsedSlots() >= this.getCapacity();
     }
     
     getCapacityPercent() {
-        return (this.getUsedSlots() / this.backpack.capacity) * 100;
+        return (this.getUsedSlots() / this.getCapacity()) * 100;
     }
     
     upgradeBackpack() {

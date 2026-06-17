@@ -5,6 +5,8 @@ import { Inventory } from './inventory.js';
 import { Shop } from './shop.js';
 import { SaveSystem } from './save.js';
 import { QuestManager } from './questManager.js';
+import { PetManager } from './petManager.js';
+import { getRarityInfo } from './petSystem.js';
 
 /**
  * Main Game class - manages the game loop and coordinates all systems
@@ -27,6 +29,7 @@ export class Game {
         this.shop = null;
         this.saveSystem = null;
         this.questManager = null;
+        this.petManager = null;
         
         // Input state
         this.keys = {};
@@ -47,12 +50,13 @@ export class Game {
         
         // Initialize systems
         this.saveSystem = new SaveSystem();
-        this.inventory = new Inventory();
-        this.player = new Player(400, 300, this.inventory);
+        this.petManager = new PetManager();
+        this.inventory = new Inventory(this.petManager);
+        this.player = new Player(400, 300, this.inventory, this.petManager);
         this.camera = new Camera(this.player);
         this.world = new World(2000, 2000);
         this.questManager = new QuestManager(this.player);
-        this.shop = new Shop(this.player, this.inventory, this.questManager);
+        this.shop = new Shop(this.player, this.inventory, this.questManager, this.petManager);
         
         // Load saved game if exists
         this.saveSystem.load(this);
@@ -164,8 +168,13 @@ export class Game {
         const ore = this.world.getOreAt(worldX, worldY);
         if (ore && this.player.canMine(ore)) {
             const pickaxe = this.player.getPickaxe();
-            const isCritical = Math.random() < pickaxe.critChance;
-            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1);
+            
+            // Apply pet bonuses
+            const miningSpeedMultiplier = this.petManager.getMiningSpeedMultiplier();
+            const critChanceBonus = this.petManager.getCritChanceBonus();
+            
+            const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus);
+            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier;
             
             // Apply damage to ore
             ore.health -= damage;
@@ -192,6 +201,9 @@ export class Game {
                         
                         // Update quest progress for mining ores
                         this.questManager.updateProgress('mine', { oreType: ore.type, rarity: ore.rarity });
+                        
+                        // Add XP to equipped pets
+                        this.petManager.addXPToEquipped(10);
                         
                         // Show drop feedback
                         const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
@@ -509,6 +521,9 @@ export class Game {
         
         // Update quest display
         this.updateQuestDisplay();
+        
+        // Update pet display
+        this.updatePetDisplay();
     }
     
     updateZoneDisplay() {
@@ -592,6 +607,118 @@ export class Game {
             const quest = activeQuests[0];
             questElement.textContent = `${quest.title}: ${quest.progress}/${quest.required}`;
         }
+    }
+    
+    updatePetDisplay() {
+        let petElement = document.getElementById('petDisplay');
+        
+        if (!petElement) {
+            petElement = document.createElement('div');
+            petElement.id = 'petDisplay';
+            petElement.style.cssText = `
+                position: absolute;
+                top: 120px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(44, 62, 80, 0.9);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                pointer-events: auto;
+                border: 2px solid #e74c3c;
+                cursor: pointer;
+            `;
+            petElement.onclick = () => this.showPetManagementUI();
+            document.getElementById('ui').appendChild(petElement);
+        }
+        
+        const equippedPets = this.petManager.getEquippedPets();
+        if (equippedPets.length === 0) {
+            petElement.textContent = 'No pets equipped';
+        } else {
+            const petEmojis = equippedPets.map(p => p.emoji).join(' ');
+            petElement.textContent = `Pets: ${petEmojis} (${equippedPets.length}/${this.petManager.maxEquippedPets})`;
+        }
+    }
+    
+    showPetManagementUI() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            border: 2px solid #e74c3c;
+            min-width: 400px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        `;
+        
+        let html = '<h2 style="margin-top: 0; color: #e74c3c;">🐾 Pet Management</h2>';
+        
+        // Show equipped pets
+        html += '<h3 style="margin-bottom: 10px;">Equipped Pets</h3>';
+        const equippedPets = this.petManager.getEquippedPets();
+        if (equippedPets.length === 0) {
+            html += '<p style="color: #95a5a6; margin-bottom: 15px;">No pets equipped.</p>';
+        } else {
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">';
+            for (const pet of equippedPets) {
+                const rarityInfo = getRarityInfo(pet.rarity);
+                html += `
+                    <div style="padding: 10px; background: #34495e; border-radius: 5px; border: 2px solid ${rarityInfo.color};">
+                        <div style="font-size: 24px; text-align: center;">${pet.emoji}</div>
+                        <h4 style="margin: 5px 0; color: ${rarityInfo.color};">${pet.name}</h4>
+                        <p style="margin: 0; font-size: 11px; color: #bdc3c7;">Level ${pet.level}</p>
+                        <button onclick="game.petManager.unequipPet('${pet.id}'); game.showPetManagementUI();" style="margin-top: 5px; padding: 5px 10px; cursor: pointer; background: #e74c3c; color: white; border: none; border-radius: 4px; width: 100%;">Unequip</button>
+                    </div>
+                `;
+            }
+            html += '</div>';
+        }
+        
+        // Show owned pets
+        html += '<h3 style="margin-bottom: 10px;">Owned Pets</h3>';
+        const ownedPets = this.petManager.getOwnedPets();
+        if (ownedPets.length === 0) {
+            html += '<p style="color: #95a5a6; margin-bottom: 15px;">No pets owned. Buy eggs in the shop!</p>';
+        } else {
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">';
+            for (const pet of ownedPets) {
+                const isEquipped = this.petManager.isEquipped(pet.id);
+                const rarityInfo = getRarityInfo(pet.rarity);
+                html += `
+                    <div style="padding: 10px; background: ${isEquipped ? '#2c3e50' : '#34495e'}; border-radius: 5px; border: 2px solid ${rarityInfo.color}; opacity: ${isEquipped ? 0.6 : 1};">
+                        <div style="font-size: 24px; text-align: center;">${pet.emoji}</div>
+                        <h4 style="margin: 5px 0; color: ${rarityInfo.color};">${pet.name}</h4>
+                        <p style="margin: 0; font-size: 11px; color: #bdc3c7;">Level ${pet.level}</p>
+                        ${!isEquipped ? `<button onclick="game.petManager.equipPet('${pet.id}'); game.showPetManagementUI();" style="margin-top: 5px; padding: 5px 10px; cursor: pointer; background: #27ae60; color: white; border: none; border-radius: 4px; width: 100%;">Equip</button>` : '<p style="margin-top: 5px; font-size: 10px; color: #27ae60; text-align: center;">Equipped</p>'}
+                    </div>
+                `;
+            }
+            html += '</div>';
+        }
+        
+        // Show active bonuses
+        html += '<h3 style="margin-bottom: 10px;">Active Bonuses</h3>';
+        html += '<div style="background: #2c3e50; padding: 10px; border-radius: 5px; margin-bottom: 15px;">';
+        html += `<p style="margin: 5px 0;">Mining Speed: +${(this.petManager.getMiningSpeedMultiplier() - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">Ore Value: +${(this.petManager.getOreValueMultiplier() - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">XP Gain: +${(this.petManager.getXPMultiplier() - 1) * 100}%</p>`;
+        html += `<p style="margin: 5px 0;">Crit Chance: +${this.petManager.getCritChanceBonus() * 100}%</p>`;
+        html += '</div>';
+        
+        html += '<button onclick="this.parentElement.remove()" style="padding: 10px 20px; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 4px; width: 100%;">Close</button>';
+        
+        modal.innerHTML = html;
+        document.body.appendChild(modal);
     }
 }
 

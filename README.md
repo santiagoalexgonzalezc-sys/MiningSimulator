@@ -2,7 +2,81 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
-## Phase 6 Features
+## Phase 7 Features
+
+- **Pet System**: Collectible pets that provide passive bonuses
+- **Pet Rarity System**: 6 rarity tiers (Common, Uncommon, Rare, Epic, Legendary, Mythic)
+- **Pet Bonuses**: Mining Speed, Ore Value, XP Gain, Crit Chance, Backpack Capacity
+- **Pet Acquisition**: Pet eggs in shop with hatching system
+- **Pet Leveling**: Pets gain XP from mining and level up to increase bonuses
+- **Pet Management UI**: Equip/unequip pets, view stats, and see active bonuses
+- **Pet Integration**: Bonuses stack and integrate with all existing systems
+- **Pet Save System**: Pet data saved with game state
+
+### Pet Rarity System
+
+**Common** (1.0x bonus multiplier)
+- Max Level: 10
+- Gray color
+- Basic bonuses
+
+**Uncommon** (1.2x bonus multiplier)
+- Max Level: 15
+- Green color
+- Improved bonuses
+
+**Rare** (1.5x bonus multiplier)
+- Max Level: 20
+- Blue color
+- Strong bonuses
+
+**Epic** (2.0x bonus multiplier)
+- Max Level: 25
+- Purple color
+- Powerful bonuses
+
+**Legendary** (3.0x bonus multiplier)
+- Max Level: 30
+- Orange color
+- Exceptional bonuses
+
+**Mythic** (5.0x bonus multiplier)
+- Max Level: 50
+- Red color
+- God-tier bonuses
+
+### Pet Bonuses
+
+**Mining Speed**: Increases damage dealt to ores
+**Ore Value**: Increases money earned from selling ores
+**XP Gain**: Increases experience points gained from mining
+**Crit Chance**: Increases chance for critical hits
+**Backpack Capacity**: Increases total inventory capacity
+
+### Pet Acquisition
+
+**Pet Eggs**: Buy eggs in the shop to hatch random pets
+- Common Egg ($100): 80% Common, 20% Uncommon
+- Uncommon Egg ($500): 50% Common, 40% Uncommon, 10% Rare
+- Rare Egg ($2,000): 20% Common, 40% Uncommon, 30% Rare, 10% Epic
+- Epic Egg ($10,000): 20% Uncommon, 40% Rare, 30% Epic, 10% Legendary
+- Legendary Egg ($50,000): 20% Rare, 40% Epic, 30% Legendary, 10% Mythic
+
+### Pet Leveling
+
+- Pets gain 10 XP per ore mined (when equipped)
+- Each level increases bonus strength by 5%
+- XP requirement increases by 50% per level
+- Max level depends on pet rarity
+
+### Pet Management
+
+- **Equip Slots**: Maximum 3 pets can be equipped at once
+- **Bonus Stacking**: All equipped pet bonuses stack additively
+- **Pet UI**: Click on pet display to manage pets
+- **Active Bonuses**: View total bonuses from equipped pets
+
+## Phase 6 Features (Retained)
 
 - **Quest System**: Structured quest system with objectives and rewards
 - **NPC System**: 3 interactive NPCs (Miner Joe, Gem Collector, Engineer)
@@ -248,13 +322,14 @@ A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript
 2. Use **WASD** or **Arrow Keys** to move the player
 3. Click on ores to mine them (must be within range)
 4. Click on NPCs to talk to them and accept quests
-5. Watch for damage numbers and critical hit effects
-6. See drop feedback showing ore type and rarity when mining
-7. Manage backpack capacity - rare ores take more slots
-8. Walk into the green **SELL ZONE** to sell all ores
-9. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
-10. Click **Shop** to upgrade pickaxes and backpack
-11. Click **Save Game** to manually save progress
+5. Click on pet display to manage pets and view bonuses
+6. Watch for damage numbers and critical hit effects
+7. See drop feedback showing ore type and rarity when mining
+8. Manage backpack capacity - rare ores take more slots
+9. Walk into the green **SELL ZONE** to sell all ores
+10. Walk into the purple **PORTAL** to switch zones (or unlock if you have enough money)
+11. Click **Shop** to upgrade pickaxes, backpack, and buy pet eggs
+12. Click **Save Game** to manually save progress
 
 ## Controls
 
@@ -286,6 +361,8 @@ MiningSimulator/
 │   ├── shop.js         # Upgrade shop system
 │   ├── questSystem.js  # Centralized quest and NPC system
 │   ├── questManager.js # Quest progress tracking and rewards
+│   ├── petSystem.js    # Centralized pet system and definitions
+│   ├── petManager.js   # Pet inventory and bonus management
 │   └── save.js         # LocalStorage save/load
 ```
 
@@ -300,11 +377,11 @@ MiningSimulator/
 - **Pickaxe System**: Centralized data-driven equipment progression
 - **Inventory System**: Centralized slot-based inventory with backpack progression
 - **Quest System**: Centralized quest and NPC system with progress tracking
+- **Pet System**: Centralized pet system with rarity, bonuses, and leveling
 
 ## Future Phases
 
-This is Phase 6 of a 10-phase development plan. Future phases will include:
-- Pets system
+This is Phase 7 of a 10-phase development plan. Future phases will include:
 - Rebirth system
 - Bosses and events
 - Multiplayer support

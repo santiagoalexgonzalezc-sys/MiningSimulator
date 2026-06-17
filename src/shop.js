@@ -1,14 +1,16 @@
 import { PICKAXES, PICKAXE_ORDER, getNextPickaxe } from './pickaxeData.js';
 import { BACKPACKS, BACKPACK_ORDER, getNextBackpack } from './inventorySystem.js';
+import { EGGS, getEgg, hatchEgg, getRarityInfo } from './petSystem.js';
 
 /**
  * Shop class - manages upgrades and purchases
  */
 export class Shop {
-    constructor(player, inventory, questManager) {
+    constructor(player, inventory, questManager, petManager) {
         this.player = player;
         this.inventory = inventory;
         this.questManager = questManager;
+        this.petManager = petManager;
         this.isOpen = false;
     }
     
@@ -164,6 +166,28 @@ export class Shop {
         
         html += '</div>';
         
+        // Pet Shop Section
+        html += '<h3 style="margin-top: 30px; margin-bottom: 15px; color: #9b59b6;">🥚 Pet Eggs</h3>';
+        html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
+        
+        for (const eggId in EGGS) {
+            const egg = EGGS[eggId];
+            const canAfford = this.player.money >= egg.cost;
+            html += `
+                <div style="padding: 10px; background: ${canAfford ? '#34495e' : '#1a252f'}; border-radius: 5px; border: 2px solid ${getRarityInfo(egg.rarity).color};">
+                    <h4 style="margin: 0 0 5px 0; color: ${getRarityInfo(egg.rarity).color};">${egg.emoji} ${egg.name}</h4>
+                    <p style="margin: 0 0 10px 0; font-size: 12px; color: #bdc3c7;">${getRarityInfo(egg.rarity).name} Egg</p>
+                    <button onclick="game.shop.purchaseEgg('${egg.id}')" 
+                            ${canAfford ? '' : 'disabled'}
+                            style="padding: 5px 10px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; background: ${canAfford ? '#9b59b6' : '#7f8c8d'}; color: white; border: none; border-radius: 4px; width: 100%;">
+                        Buy ($${egg.cost})
+                    </button>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        
         html += '<button onclick="game.shop.close()" style="margin-top: 20px; padding: 10px 20px; width: 100%;">Close</button>';
         
         shopModal.innerHTML = html;
@@ -238,6 +262,50 @@ export class Shop {
         
         document.body.appendChild(feedback);
         
+        setTimeout(() => {
+            feedback.remove();
+        }, 2000);
+    }
+    
+    purchaseEgg(eggId) {
+        const egg = getEgg(eggId);
+        if (!egg) return;
+        
+        if (this.player.money >= egg.cost) {
+            this.player.money -= egg.cost;
+            
+            // Hatch the egg
+            const hatchedPet = hatchEgg(eggId);
+            if (hatchedPet) {
+                this.petManager.addPet(hatchedPet.id);
+                this.showPetHatchedFeedback(hatchedPet);
+            }
+            
+            this.renderShop();
+        }
+    }
+    
+    showPetHatchedFeedback(pet) {
+        const feedback = document.createElement('div');
+        feedback.textContent = `New Pet: ${pet.emoji} ${pet.name}!`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #9b59b6;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+            border: 2px solid #8e44ad;
+            text-align: center;
+            animation: pulse 0.5s ease-in-out;
+        `;
+        
+        document.body.appendChild(feedback);
         setTimeout(() => {
             feedback.remove();
         }, 2000);
