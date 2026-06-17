@@ -70,7 +70,7 @@ export const ORE_TYPES = {
         requiredPower: 1,
         health: 3,
         color: '#2c3e50',
-        allowedRarities: ['common', 'uncommon']
+        allowedRarities: ['common', 'uncommon', 'rare', 'epic']
     },
     IRON: {
         id: 'iron',
@@ -79,7 +79,7 @@ export const ORE_TYPES = {
         requiredPower: 2,
         health: 5,
         color: '#95a5a6',
-        allowedRarities: ['common', 'uncommon', 'rare']
+        allowedRarities: ['common', 'uncommon', 'rare', 'epic']
     },
     GOLD: {
         id: 'gold',
