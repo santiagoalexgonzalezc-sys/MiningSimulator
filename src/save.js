@@ -18,11 +18,22 @@ export class SaveSystem {
         };
         
         try {
-            localStorage.setItem(this.saveKey, JSON.stringify(saveData));
+            const jsonString = JSON.stringify(saveData);
+            console.log('Save data size:', jsonString.length, 'bytes');
+            localStorage.setItem(this.saveKey, jsonString);
             console.log('Game saved successfully');
+            
+            // Verify save
+            const savedData = localStorage.getItem(this.saveKey);
+            if (savedData) {
+                console.log('Save verified in localStorage');
+            } else {
+                console.error('Save verification failed - data not in localStorage');
+            }
             return true;
         } catch (error) {
             console.error('Failed to save game:', error);
+            console.error('Error details:', error.message);
             return false;
         }
     }

@@ -42,6 +42,9 @@ export class Game {
         
         // Screen shake
         this.screenShake = 0;
+        
+        // Auto-save
+        this.autoSaveInterval = null;
     }
     
     init() {
@@ -74,6 +77,9 @@ export class Game {
         
         // Create UI
         this.createUI();
+        
+        // Start auto-save interval (every 30 seconds)
+        this.startAutoSave();
     }
     
     resizeCanvas() {
@@ -111,6 +117,11 @@ export class Game {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
             this.resizeCanvas();
+        });
+        
+        // Auto-save on window unload
+        window.addEventListener('beforeunload', () => {
+            this.saveSystem.save(this);
         });
     }
     
@@ -505,7 +516,12 @@ export class Game {
         // Save button
         const saveBtn = document.getElementById('saveBtn');
         if (saveBtn) {
-            saveBtn.addEventListener('click', () => this.saveSystem.save(this));
+            saveBtn.addEventListener('click', () => {
+                const success = this.saveSystem.save(this);
+                if (success) {
+                    this.showSaveFeedback();
+                }
+            });
         }
     }
     
@@ -758,6 +774,62 @@ export class Game {
         const canRebirth = this.rebirthManager.canRebirth(this.player, this.questManager);
         rebirthElement.textContent = `Rebirth: ${this.rebirthManager.rebirthCount} | RP: ${this.rebirthManager.rebirthPoints} ${canRebirth ? '(READY)' : ''}`;
         rebirthElement.style.borderColor = canRebirth ? '#e67e22' : '#7f8c8d';
+    }
+    
+    showSaveFeedback() {
+        const feedback = document.createElement('div');
+        feedback.textContent = 'Game Saved!';
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(39, 174, 96, 0.95);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1000;
+            border: 2px solid #27ae60;
+            text-align: center;
+            animation: fadeInOut 2s ease-in-out forwards;
+        `;
+        
+        if (!document.getElementById('saveFeedbackStyle')) {
+            const style = document.createElement('style');
+            style.id = 'saveFeedbackStyle';
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                    20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => {
+            feedback.remove();
+        }, 2000);
+    }
+    
+    startAutoSave() {
+        // Clear existing interval if any
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+        }
+        
+        // Auto-save every 5 seconds
+        this.autoSaveInterval = setInterval(() => {
+            const success = this.saveSystem.save(this);
+            if (success) {
+                console.log('Auto-saved game');
+            }
+        }, 5000);
     }
     
     showRebirthPanel() {
