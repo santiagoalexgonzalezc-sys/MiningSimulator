@@ -22,14 +22,16 @@ describe('pickaxeData.js', () => {
             expect(PICKAXES).toHaveProperty('GOLD');
             expect(PICKAXES).toHaveProperty('DIAMOND');
             expect(PICKAXES).toHaveProperty('MYTHIC');
+            expect(PICKAXES).toHaveProperty('DIVINE');
+            expect(PICKAXES).toHaveProperty('COSMIC');
         });
 
-        test('should have 20-50% power growth per upgrade', () => {
+        test('should have 20-70% power growth per upgrade (higher for endgame)', () => {
             const powers = PICKAXE_ORDER.map(id => PICKAXES[id.toUpperCase()].miningPower);
             for (let i = 1; i < powers.length; i++) {
                 const growth = ((powers[i] - powers[i - 1]) / powers[i - 1]) * 100;
                 expect(growth).toBeGreaterThanOrEqual(20);
-                expect(growth).toBeLessThanOrEqual(50);
+                expect(growth).toBeLessThanOrEqual(70);
             }
         });
 
@@ -54,8 +56,8 @@ describe('pickaxeData.js', () => {
             }
         });
 
-        test('mythic pickaxe should have 100 power', () => {
-            expect(PICKAXES.MYTHIC.miningPower).toBe(100);
+        test('cosmic pickaxe should have 250 power', () => {
+            expect(PICKAXES.COSMIC.miningPower).toBe(250);
         });
 
         test('wooden pickaxe should be free', () => {
@@ -65,7 +67,7 @@ describe('pickaxeData.js', () => {
 
     describe('PICKAXE_ORDER', () => {
         test('should have correct progression order', () => {
-            expect(PICKAXE_ORDER).toEqual(['wooden', 'stone', 'iron', 'steel', 'gold', 'diamond', 'mythic']);
+            expect(PICKAXE_ORDER).toEqual(['wooden', 'stone', 'iron', 'steel', 'gold', 'diamond', 'mythic', 'divine', 'cosmic']);
         });
 
         test('should match PICKAXES keys', () => {
@@ -103,7 +105,7 @@ describe('pickaxeData.js', () => {
         });
 
         test('should return null for last pickaxe', () => {
-            const next = getNextPickaxe('mythic');
+            const next = getNextPickaxe('cosmic');
             expect(next).toBeNull();
         });
 
@@ -114,7 +116,7 @@ describe('pickaxeData.js', () => {
 
         test('should handle entire progression chain', () => {
             let current = 'wooden';
-            const expectedOrder = ['stone', 'iron', 'steel', 'gold', 'diamond', 'mythic'];
+            const expectedOrder = ['stone', 'iron', 'steel', 'gold', 'diamond', 'mythic', 'divine', 'cosmic'];
             
             for (const expected of expectedOrder) {
                 const next = getNextPickaxe(current);
@@ -122,7 +124,7 @@ describe('pickaxeData.js', () => {
                 current = expected;
             }
             
-            expect(getNextPickaxe('mythic')).toBeNull();
+            expect(getNextPickaxe('cosmic')).toBeNull();
         });
     });
 
@@ -218,7 +220,7 @@ describe('pickaxeData.js', () => {
             
             // Total growth should be reasonable (not 1000x)
             const totalGrowth = lastPower / firstPower;
-            expect(totalGrowth).toBeLessThan(20);
+            expect(totalGrowth).toBeLessThan(30);
         });
     });
 });

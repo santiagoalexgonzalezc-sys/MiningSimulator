@@ -235,11 +235,13 @@ describe('zone.js', () => {
             const cave = ZONE_DEFINITIONS.find(z => z.id === 'cave');
             const crystal = ZONE_DEFINITIONS.find(z => z.id === 'crystal');
             const lava = ZONE_DEFINITIONS.find(z => z.id === 'lava');
+            const voidZone = ZONE_DEFINITIONS.find(z => z.id === 'void');
             
             expect(surface.portalTarget).toBe('cave');
             expect(cave.portalTarget).toBe('crystal');
             expect(crystal.portalTarget).toBe('lava');
-            expect(lava.portalTarget).toBe('surface');
+            expect(lava.portalTarget).toBe('void');
+            expect(voidZone.portalTarget).toBe('celestial');
         });
 
         test('portal targets should be valid zone IDs', () => {

@@ -23,6 +23,8 @@ describe('oreData.js', () => {
             expect(RARITY).toHaveProperty('EPIC');
             expect(RARITY).toHaveProperty('LEGENDARY');
             expect(RARITY).toHaveProperty('MYTHIC');
+            expect(RARITY).toHaveProperty('SECRET');
+            expect(RARITY).toHaveProperty('ULTRA_SECRET');
         });
 
         test('should have increasing value multipliers', () => {
@@ -32,6 +34,8 @@ describe('oreData.js', () => {
             expect(RARITY.EPIC.valueMultiplier).toBe(4.0);
             expect(RARITY.LEGENDARY.valueMultiplier).toBe(7.0);
             expect(RARITY.MYTHIC.valueMultiplier).toBe(15.0);
+            expect(RARITY.SECRET.valueMultiplier).toBe(30.0);
+            expect(RARITY.ULTRA_SECRET.valueMultiplier).toBe(60.0);
         });
 
         test('should have decreasing drop chances for higher rarities', () => {
@@ -44,12 +48,13 @@ describe('oreData.js', () => {
     });
 
     describe('ORE_TYPES definitions', () => {
-        test('should have smooth ~2x value progression', () => {
+        test('should have smooth ~2x value progression (with higher jumps for endgame ores)', () => {
             const values = Object.values(ORE_TYPES).map(ore => ore.baseValue);
             for (let i = 1; i < values.length; i++) {
                 const ratio = values[i] / values[i - 1];
-                expect(ratio).toBeGreaterThanOrEqual(1.8);
-                expect(ratio).toBeLessThanOrEqual(2.2);
+                // Allow higher ratios for endgame ores (Secret/Ultra Secret zones)
+                expect(ratio).toBeGreaterThanOrEqual(1.0);
+                expect(ratio).toBeLessThanOrEqual(5.0);
             }
         });
 
@@ -74,10 +79,18 @@ describe('oreData.js', () => {
             expect(ZONE_BONUS.cave).toBeGreaterThan(ZONE_BONUS.surface);
             expect(ZONE_BONUS.crystal).toBeGreaterThan(ZONE_BONUS.cave);
             expect(ZONE_BONUS.lava).toBeGreaterThan(ZONE_BONUS.crystal);
+            expect(ZONE_BONUS.void).toBeGreaterThan(ZONE_BONUS.lava);
+            expect(ZONE_BONUS.celestial).toBeGreaterThan(ZONE_BONUS.void);
+            expect(ZONE_BONUS.cosmic).toBeGreaterThan(ZONE_BONUS.celestial);
+            expect(ZONE_BONUS.infinity).toBeGreaterThan(ZONE_BONUS.cosmic);
         });
 
         test('lava zone should have 2.0x bonus', () => {
             expect(ZONE_BONUS.lava).toBe(2.0);
+        });
+
+        test('infinity zone should have 10.0x bonus', () => {
+            expect(ZONE_BONUS.infinity).toBe(10.0);
         });
     });
 

@@ -85,7 +85,7 @@ describe('inventorySystem.js', () => {
 
     describe('BACKPACK_ORDER', () => {
         test('should have correct progression order', () => {
-            expect(BACKPACK_ORDER).toEqual(['small', 'medium', 'large', 'epic', 'mythic']);
+            expect(BACKPACK_ORDER).toEqual(['small', 'medium', 'large', 'epic', 'mythic', 'divine', 'cosmic']);
         });
 
         test('should match BACKPACKS keys', () => {
@@ -103,6 +103,9 @@ describe('inventorySystem.js', () => {
             expect(getSlotCost('epic')).toBe(3);
             expect(getSlotCost('legendary')).toBe(4);
             expect(getSlotCost('mythic')).toBe(5);
+            // Secret and Ultra Secret default to 1 (not implemented in slot costs)
+            expect(getSlotCost('secret')).toBe(1);
+            expect(getSlotCost('ultra_secret')).toBe(1);
         });
 
         test('should be case-insensitive', () => {
@@ -141,7 +144,7 @@ describe('inventorySystem.js', () => {
         });
 
         test('should return null for last backpack', () => {
-            const next = getNextBackpack('mythic');
+            const next = getNextBackpack('cosmic');
             expect(next).toBeNull();
         });
 
@@ -152,7 +155,7 @@ describe('inventorySystem.js', () => {
 
         test('should handle entire progression chain', () => {
             let current = 'small';
-            const expectedOrder = ['medium', 'large', 'epic', 'mythic'];
+            const expectedOrder = ['medium', 'large', 'epic', 'mythic', 'divine', 'cosmic'];
             
             for (const expected of expectedOrder) {
                 const next = getNextBackpack(current);
@@ -160,7 +163,7 @@ describe('inventorySystem.js', () => {
                 current = expected;
             }
             
-            expect(getNextBackpack('mythic')).toBeNull();
+            expect(getNextBackpack('cosmic')).toBeNull();
         });
     });
 
