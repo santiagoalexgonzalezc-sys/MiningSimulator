@@ -54,11 +54,27 @@ export const BACKPACKS = {
         cost: 12500,
         color: '#FFD700',
         description: 'Legendary backpack with massive capacity.'
+    },
+    DIVINE: {
+        id: 'divine',
+        name: 'Divine Backpack',
+        capacity: 350,
+        cost: 50000,
+        color: '#FFA500',
+        description: 'Divine backpack with +5% ore value bonus.'
+    },
+    COSMIC: {
+        id: 'cosmic',
+        name: 'Cosmic Backpack',
+        capacity: 600,
+        cost: 250000,
+        color: '#00FFFF',
+        description: 'Cosmic backpack with +10% ore value and +5% luck bonuses.'
     }
 };
 
 // Backpack progression order
-export const BACKPACK_ORDER = ['small', 'medium', 'large', 'epic', 'mythic'];
+export const BACKPACK_ORDER = ['small', 'medium', 'large', 'epic', 'mythic', 'divine', 'cosmic'];
 
 /**
  * Get slot cost for a rarity

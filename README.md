@@ -2,6 +2,181 @@
 
 A browser-based mining simulator game built with HTML5 Canvas and ES6 JavaScript.
 
+## Phase 9 Features
+
+- **New Zones**: 4 additional zones (Void, Celestial, Cosmic, Infinity) with unique visuals and ore distributions
+- **New Ore Rarities**: Secret and Ultra Secret rarity tiers for ultra-rare discoveries
+- **16 New Ores**: Void Shards, Ancient Relics, Celestial Fragments, Astral Gems, Divine Essences, Starrcores, Cosmic Crystals, Eternium, Nebulite, Quantum Cores, Infinity Stones, Chrono Crystals, Singularity Ores, Genesis Crystals, Reality Shards, Primordial Essences, and Worldheart
+- **Divine Pickaxe**: 8th pickaxe tier with 50 power, 4.0x speed, 25% crit
+- **Cosmic Pickaxe**: 9th pickaxe tier with 75 power, 5.0x speed, 30% crit
+- **Divine Backpack**: 6th backpack tier with 300 slots capacity
+- **Cosmic Backpack**: 7th backpack tier with 500 slots capacity
+- **Boss System**: 6 unique bosses (Crystal Golem, Lava Titan, Void Guardian, Celestial Overlord, Cosmic Emperor, Worldheart Titan) with dedicated arenas
+- **Boss Combat**: Fight bosses with your pickaxe, earn boss coins as rewards
+- **Boss Arenas**: Dedicated arena areas with entrance portals for boss fights
+- **Boss Coins**: New currency earned from defeating bosses
+- **Boss Shop**: Spend boss coins on upgrades, materials, eggs, and consumables
+- **World Events**: 8 random world events (Ore Rush, Lucky Hour, Gold Storm, Crystal Rain, Boss Frenzy, Void Surge, Celestial Alignment, Cosmic Convergence) with temporary bonuses
+- **Event Bonuses**: Events provide bonuses to ore spawn rate, crit chance, ore value, and boss coin rewards
+- **Achievement System**: 28 achievements across mining, money, bosses, zones, rebirths, rarities, equipment, and challenges
+- **Achievement Popups**: Visual notifications when achievements are unlocked
+- **Achievement Rewards**: Money and boss coins for completing achievements
+- **Save System**: All Phase 9 systems fully integrated with save/load
+
+### New Zones
+
+**Void Zone**
+- Background: Deep purple
+- Rock Style: Star
+- Unlock: $50,000
+- Ores: Void Shards, Ancient Relics
+
+**Celestial Zone**
+- Background: Light blue
+- Rock Style: Octagon
+- Unlock: $200,000
+- Ores: Celestial Fragments, Astral Gems
+
+**Cosmic Zone**
+- Background: Pink/purple gradient
+- Rock Style: Spiral
+- Unlock: $1,000,000
+- Ores: Divine Essences, Starrcores, Cosmic Crystals
+
+**Infinity Zone**
+- Background: Rainbow gradient
+- Rock Style: Infinity symbol
+- Unlock: $10,000,000
+- Ores: Eternium, Nebulite, Quantum Cores, Infinity Stones, Chrono Crystals, Singularity Ores, Genesis Crystals, Reality Shards, Primordial Essences, Worldheart
+
+### New Ore Rarities
+
+**Secret** (25.0x value)
+- Purple-pink color, intense glow
+- Found in Void and Celestial zones
+
+**Ultra Secret** (50.0x value)
+- Rainbow color, maximum glow
+- Found in Cosmic and Infinity zones
+
+### Boss System
+
+**Crystal Golem** (Crystal Zone)
+- HP: 500 | Level: 20
+- Rewards: 10-20 Boss Coins
+
+**Lava Titan** (Lava Zone)
+- HP: 1000 | Level: 30
+- Rewards: 20-40 Boss Coins
+
+**Void Guardian** (Void Zone)
+- HP: 2000 | Level: 40
+- Rewards: 30-50 Boss Coins
+
+**Celestial Overlord** (Celestial Zone)
+- HP: 4000 | Level: 50
+- Rewards: 40-60 Boss Coins
+
+**Cosmic Emperor** (Cosmic Zone)
+- HP: 8000 | Level: 60
+- Rewards: 50-80 Boss Coins
+
+**Worldheart Titan** (Infinity Zone)
+- HP: 15000 | Level: 70
+- Rewards: 100-150 Boss Coins
+
+### Boss Shop Items
+
+**Upgrades**
+- Boss Pickaxe Upgrade: +10% mining power (100 coins)
+- Boss Luck Upgrade: +5% crit chance (150 coins)
+- Boss Speed Upgrade: +15% mining speed (200 coins)
+
+**Materials**
+- Void Shard Pack: 5 Void Shards (50 coins)
+- Celestial Fragment Pack: 3 Celestial Fragments (100 coins)
+- Divine Essence Pack: 2 Divine Essences (200 coins)
+
+**Eggs**
+- Legendary Egg: Guaranteed Legendary+ pet (300 coins)
+- Mythic Egg: Guaranteed Mythic pet (500 coins)
+
+**Consumables**
+- Boss Key: Instantly respawn any defeated boss (250 coins)
+- Lucky Charm: Double boss coin rewards for 1 hour (150 coins)
+
+### World Events
+
+**Ore Rush** (10 min)
+- 2x ore spawn rate
+
+**Lucky Hour** (15 min)
+- 2x critical chance
+
+**Gold Storm** (10 min)
+- 2x ore value
+
+**Crystal Rain** (15 min)
+- 3x crystal ore spawn rate
+
+**Boss Frenzy** (20 min)
+- 2x boss coin rewards
+
+**Void Surge** (15 min)
+- 2x void ore spawn rate
+
+**Celestial Alignment** (20 min)
+- 3x celestial ore spawn rate
+
+**Cosmic Convergence** (30 min)
+- All bonuses active (2x ore spawn, 2x crit, 2x value, 2x boss coins)
+
+### Achievement Categories
+
+**Mining Achievements**
+- First Steps: Mine your first ore
+- Ore Miner: Mine 100 ores
+- Master Miner: Mine 1,000 ores
+- Legendary Miner: Mine 10,000 ores
+
+**Money Achievements**
+- Wealthy: Earn $10,000
+- Millionaire: Earn $1,000,000
+
+**Boss Achievements**
+- Boss Slayer: Defeat your first boss
+- Boss Hunter: Defeat 10 bosses
+- Boss Master: Defeat 100 bosses
+- Worldheart Slayer: Defeat the Worldheart Titan
+
+**Zone Achievements**
+- Void Explorer: Enter the Void zone
+- Celestial Explorer: Enter the Celestial zone
+- Cosmic Explorer: Enter the Cosmic zone
+- Infinity Explorer: Enter the Infinity zone
+
+**Rebirth Achievements**
+- Reborn: Rebirth for the first time
+- Rebirth Master: Reirth 10 times
+
+**Rarity Achievements**
+- Rare Find: Mine a Rare ore
+- Epic Discovery: Mine an Epic ore
+- Legendary Discovery: Mine a Legendary ore
+- Mythic Discovery: Mine a Mythic ore
+- Secret Discovery: Mine a Secret ore
+- Ultra Secret Discovery: Mine an Ultra Secret ore
+
+**Equipment Achievements**
+- Divine Power: Obtain the Divine Pickaxe
+- Cosmic Power: Obtain the Cosmic Pickaxe
+- Divine Storage: Obtain the Divine Backpack
+- Cosmic Storage: Obtain the Cosmic Backpack
+
+**Challenge Achievements**
+- Collector: Mine every type of ore
+- Speed Miner: Mine 100 ores in 1 minute
+
 ## Phase 8 Features
 
 - **Rebirth System**: Reset progression for permanent bonuses and infinite progression

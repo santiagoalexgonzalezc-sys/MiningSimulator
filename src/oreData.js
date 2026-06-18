@@ -58,6 +58,24 @@ export const RARITY = {
         color: '#e74c3c',
         glowColor: '#ec7063',
         glowIntensity: 15
+    },
+    SECRET: {
+        id: 'secret',
+        name: 'Secret',
+        valueMultiplier: 30.0,
+        dropChance: 0.005,
+        color: '#ff00ff',
+        glowColor: '#ff66ff',
+        glowIntensity: 20
+    },
+    ULTRA_SECRET: {
+        id: 'ultra_secret',
+        name: 'Ultra Secret',
+        valueMultiplier: 60.0,
+        dropChance: 0.001,
+        color: '#00ffff',
+        glowColor: '#66ffff',
+        glowIntensity: 25
     }
 };
 
@@ -125,6 +143,163 @@ export const ORE_TYPES = {
         health: 25,
         color: '#9b59b6',
         allowedRarities: ['mythic']
+    },
+    // Void Tier
+    VOID_SHARD: {
+        id: 'void_shard',
+        name: 'Void Shard',
+        baseValue: 1280,
+        requiredPower: 12,
+        health: 30,
+        color: '#4b0082',
+        allowedRarities: ['legendary']
+    },
+    ANCIENT_RELIC: {
+        id: 'ancient_relic',
+        name: 'Ancient Relic',
+        baseValue: 1600,
+        requiredPower: 13,
+        health: 32,
+        color: '#800080',
+        allowedRarities: ['legendary']
+    },
+    CELESTIAL_FRAGMENT: {
+        id: 'celestial_fragment',
+        name: 'Celestial Fragment',
+        baseValue: 2560,
+        requiredPower: 14,
+        health: 35,
+        color: '#00bfff',
+        allowedRarities: ['mythic']
+    },
+    ASTRAL_GEM: {
+        id: 'astral_gem',
+        name: 'Astral Gem',
+        baseValue: 3000,
+        requiredPower: 15,
+        health: 38,
+        color: '#7b68ee',
+        allowedRarities: ['mythic']
+    },
+    // Divine Tier
+    DIVINE_ESSENCE: {
+        id: 'divine_essence',
+        name: 'Divine Essence',
+        baseValue: 5120,
+        requiredPower: 18,
+        health: 45,
+        color: '#ffd700',
+        allowedRarities: ['mythic']
+    },
+    STARCORE: {
+        id: 'starcore',
+        name: 'Starcore',
+        baseValue: 7500,
+        requiredPower: 20,
+        health: 50,
+        color: '#fff8dc',
+        allowedRarities: ['mythic']
+    },
+    COSMIC_CRYSTAL: {
+        id: 'cosmic_crystal',
+        name: 'Cosmic Crystal',
+        baseValue: 10240,
+        requiredPower: 22,
+        health: 55,
+        color: '#e6e6fa',
+        allowedRarities: ['mythic']
+    },
+    ETHERNIUM: {
+        id: 'eternium',
+        name: 'Eternium',
+        baseValue: 15000,
+        requiredPower: 25,
+        health: 60,
+        color: '#f0e68c',
+        allowedRarities: ['mythic']
+    },
+    // Transcendent Tier
+    NEBULITE: {
+        id: 'nebulite',
+        name: 'Nebulite',
+        baseValue: 20480,
+        requiredPower: 30,
+        health: 70,
+        color: '#ff69b4',
+        allowedRarities: ['secret']
+    },
+    QUANTUM_CORE: {
+        id: 'quantum_core',
+        name: 'Quantum Core',
+        baseValue: 30000,
+        requiredPower: 35,
+        health: 80,
+        color: '#00ff00',
+        allowedRarities: ['secret']
+    },
+    INFINITY_STONE: {
+        id: 'infinity_stone',
+        name: 'Infinity Stone',
+        baseValue: 40960,
+        requiredPower: 40,
+        health: 90,
+        color: '#ff4500',
+        allowedRarities: ['secret']
+    },
+    CHRONO_CRYSTAL: {
+        id: 'chrono_crystal',
+        name: 'Chrono Crystal',
+        baseValue: 60000,
+        requiredPower: 45,
+        health: 100,
+        color: '#00ffff',
+        allowedRarities: ['secret']
+    },
+    SINGULARITY_ORE: {
+        id: 'singularity_ore',
+        name: 'Singularity Ore',
+        baseValue: 80000,
+        requiredPower: 50,
+        health: 110,
+        color: '#1a1a1a',
+        allowedRarities: ['secret']
+    },
+    // Ultra-Rare Tier
+    GENESIS_CRYSTAL: {
+        id: 'genesis_crystal',
+        name: 'Genesis Crystal',
+        baseValue: 120000,
+        requiredPower: 60,
+        health: 125,
+        color: '#ffffff',
+        allowedRarities: ['ultra_secret']
+    },
+    REALITY_SHARD: {
+        id: 'reality_shard',
+        name: 'Reality Shard',
+        baseValue: 180000,
+        requiredPower: 70,
+        health: 140,
+        color: '#ff1493',
+        allowedRarities: ['ultra_secret']
+    },
+    PRIMORDIAL_ESSENCE: {
+        id: 'primordial_essence',
+        name: 'Primordial Essence',
+        baseValue: 250000,
+        requiredPower: 80,
+        health: 160,
+        color: '#ffdead',
+        allowedRarities: ['ultra_secret']
+    },
+    WORLDHEART: {
+        id: 'worldheart',
+        name: 'Worldheart',
+        baseValue: 500000,
+        requiredPower: 100,
+        health: 200,
+        color: '#ff0000',
+        allowedRarities: ['ultra_secret']
     }
 };
 
@@ -133,7 +308,11 @@ export const ZONE_BONUS = {
     surface: 1.0,
     cave: 1.2,
     crystal: 1.5,
-    lava: 2.0
+    lava: 2.0,
+    void: 3.0,
+    celestial: 4.0,
+    cosmic: 6.0,
+    infinity: 10.0
 };
 
 /**
@@ -152,10 +331,14 @@ export function calculateOreValue(oreType, rarity, zoneId) {
  */
 export function getRandomRarity(zoneId) {
     const zoneRarityWeights = {
-        surface: [0.7, 0.25, 0.05, 0, 0, 0],      // Mostly common/uncommon
-        cave: [0.5, 0.35, 0.12, 0.03, 0, 0],       // Common/uncommon/rare
-        crystal: [0.2, 0.3, 0.3, 0.15, 0.05, 0],    // Rare/epic/legendary
-        lava: [0.1, 0.2, 0.3, 0.25, 0.12, 0.03]     // Epic/legendary/mythic
+        surface: [0.7, 0.25, 0.05, 0, 0, 0, 0, 0],      // Mostly common/uncommon
+        cave: [0.5, 0.35, 0.12, 0.03, 0, 0, 0, 0],       // Common/uncommon/rare
+        crystal: [0.2, 0.3, 0.3, 0.15, 0.05, 0, 0, 0],    // Rare/epic/legendary
+        lava: [0.1, 0.2, 0.3, 0.25, 0.12, 0.03, 0, 0],    // Epic/legendary/mythic
+        void: [0.05, 0.15, 0.3, 0.25, 0.15, 0.08, 0.02, 0],    // Legendary/mythic focus
+        celestial: [0.02, 0.1, 0.2, 0.25, 0.25, 0.12, 0.05, 0.01],  // Mythic/secret focus
+        cosmic: [0, 0.05, 0.15, 0.2, 0.3, 0.2, 0.08, 0.02],       // Secret focus
+        infinity: [0, 0, 0.1, 0.15, 0.25, 0.3, 0.15, 0.05]         // Ultra secret focus
     };
     
     const weights = zoneRarityWeights[zoneId] || zoneRarityWeights.surface;
@@ -182,7 +365,11 @@ export function getRandomOreType(zoneId, rarity) {
         surface: ['COAL', 'IRON'],
         cave: ['IRON', 'GOLD'],
         crystal: ['GOLD', 'DIAMOND', 'EMERALD'],
-        lava: ['DIAMOND', 'RUBY', 'MYTHIC_ORE']
+        lava: ['DIAMOND', 'RUBY', 'MYTHIC_ORE'],
+        void: ['VOID_SHARD', 'ANCIENT_RELIC', 'CELESTIAL_FRAGMENT', 'ASTRAL_GEM'],
+        celestial: ['CELESTIAL_FRAGMENT', 'ASTRAL_GEM', 'DIVINE_ESSENCE', 'STARCORE'],
+        cosmic: ['COSMIC_CRYSTAL', 'ETERNIUM', 'NEBULITE', 'QUANTUM_CORE'],
+        infinity: ['INFINITY_STONE', 'CHRONO_CRYSTAL', 'SINGULARITY_ORE', 'GENESIS_CRYSTAL', 'REALITY_SHARD', 'PRIMORDIAL_ESSENCE', 'WORLDHEART']
     };
     
     const availableTypes = zoneOreTypes[zoneId] || zoneOreTypes.surface;
@@ -239,7 +426,11 @@ export function calculateOreHP(zoneId, rarityId, baseHealth) {
         surface: 1.0,
         cave: 1.5,
         crystal: 2.0,
-        lava: 3.0
+        lava: 3.0,
+        void: 4.0,
+        celestial: 5.0,
+        cosmic: 6.0,
+        infinity: 8.0
     };
     
     const rarityMultipliers = {
@@ -248,7 +439,9 @@ export function calculateOreHP(zoneId, rarityId, baseHealth) {
         rare: 1.5,
         epic: 2.0,
         legendary: 2.5,
-        mythic: 3.5
+        mythic: 3.5,
+        secret: 5.0,
+        ultra_secret: 8.0
     };
     
     const zoneMult = zoneMultipliers[zoneId] || 1.0;

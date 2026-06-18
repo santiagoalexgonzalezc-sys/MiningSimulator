@@ -93,8 +93,56 @@ export const ZONE_DEFINITIONS = [
         rockStyle: 'hexagon',
         startPosition: { x: 100, y: 100 },
         portalPosition: { x: 1800, y: 900 },
-        portalTarget: 'surface',
+        portalTarget: 'void',
         unlockRequirement: { type: 'money', value: 2500 },
         unlockMessage: 'Requires $2500 to unlock'
+    },
+    {
+        id: 'void',
+        name: 'Void Mine',
+        backgroundColor: '#1a0a2e',
+        gridColor: '#0d0518',
+        rockStyle: 'star',
+        startPosition: { x: 100, y: 100 },
+        portalPosition: { x: 1800, y: 900 },
+        portalTarget: 'celestial',
+        unlockRequirement: { type: 'money', value: 10000 },
+        unlockMessage: 'Requires $10,000 to unlock'
+    },
+    {
+        id: 'celestial',
+        name: 'Celestial Mine',
+        backgroundColor: '#0f2040',
+        gridColor: '#0a1525',
+        rockStyle: 'octagon',
+        startPosition: { x: 100, y: 100 },
+        portalPosition: { x: 1800, y: 900 },
+        portalTarget: 'cosmic',
+        unlockRequirement: { type: 'money', value: 50000 },
+        unlockMessage: 'Requires $50,000 to unlock'
+    },
+    {
+        id: 'cosmic',
+        name: 'Cosmic Mine',
+        backgroundColor: '#0a0a1a',
+        gridColor: '#050510',
+        rockStyle: 'spiral',
+        startPosition: { x: 100, y: 100 },
+        portalPosition: { x: 1800, y: 900 },
+        portalTarget: 'infinity',
+        unlockRequirement: { type: 'money', value: 250000 },
+        unlockMessage: 'Requires $250,000 to unlock'
+    },
+    {
+        id: 'infinity',
+        name: 'Infinity Mine',
+        backgroundColor: '#000000',
+        gridColor: '#1a1a1a',
+        rockStyle: 'infinity',
+        startPosition: { x: 100, y: 100 },
+        portalPosition: { x: 1800, y: 900 },
+        portalTarget: 'surface',
+        unlockRequirement: { type: 'money', value: 1000000 },
+        unlockMessage: 'Requires $1,000,000 to unlock'
     }
 ];

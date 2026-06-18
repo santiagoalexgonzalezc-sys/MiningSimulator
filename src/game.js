@@ -8,6 +8,12 @@ import { QuestManager } from './questManager.js';
 import { PetManager } from './petManager.js';
 import { getRarityInfo } from './petSystem.js';
 import { RebirthManager } from './rebirthManager.js';
+import { BossManager } from './bossManager.js';
+import { ArenaManager } from './bossArena.js';
+import { BossShop } from './bossShop.js';
+import { EventManager } from './eventManager.js';
+import { AchievementManager } from './achievementManager.js';
+import { getBossByZone } from './bossData.js';
 
 /**
  * Main Game class - manages the game loop and coordinates all systems
@@ -32,6 +38,11 @@ export class Game {
         this.questManager = null;
         this.petManager = null;
         this.rebirthManager = null;
+        this.bossManager = null;
+        this.arenaManager = null;
+        this.bossShop = null;
+        this.eventManager = null;
+        this.achievementManager = null;
         
         // Input state
         this.keys = {};
@@ -63,6 +74,12 @@ export class Game {
         this.world = new World(2000, 2000);
         this.questManager = new QuestManager(this.player);
         this.shop = new Shop(this.player, this.inventory, this.questManager, this.petManager);
+        this.bossManager = new BossManager(this.rebirthManager);
+        this.arenaManager = new ArenaManager();
+        this.bossShop = new BossShop(this.bossManager);
+        this.eventManager = new EventManager();
+        this.achievementManager = new AchievementManager(this.player, this.bossManager, this.rebirthManager);
+        this.achievementManager.setPopupCallback((achievement) => this.showAchievementPopup(achievement));
         
         // Load saved game if exists
         this.saveSystem.load(this);
@@ -150,6 +167,18 @@ export class Game {
         // Update world (respawn ores, etc.)
         this.world.update(dt);
         
+        // Update arena manager
+        this.arenaManager.update(this.player);
+        
+        // Update boss manager
+        this.bossManager.update(dt, this.player);
+        
+        // Update event manager
+        this.eventManager.update(dt);
+        
+        // Update achievement manager
+        this.achievementManager.update(dt);
+        
         // Handle mining
         if (this.mouse.clicked) {
             this.handleMining();
@@ -161,6 +190,9 @@ export class Game {
         
         // Check zone portal
         this.checkZonePortal();
+        
+        // Check arena entrance
+        this.checkArenaEntrance();
         
         // Update UI
         this.updateUI();
@@ -178,6 +210,23 @@ export class Game {
             return;
         }
         
+        // Check if clicking on a boss (in arena)
+        const activeArena = this.arenaManager.getActiveArena();
+        if (activeArena && activeArena.playerInArena) {
+            const activeBoss = this.bossManager.getActiveBossByZone(activeArena.zone);
+            if (activeBoss && activeBoss.isAlive) {
+                // Calculate distance to boss
+                const dx = worldX - (activeBoss.x + activeBoss.width / 2);
+                const dy = worldY - (activeBoss.y + activeBoss.height / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < activeBoss.width) {
+                    this.handleBossCombat(activeBoss);
+                    return;
+                }
+            }
+        }
+        
         // Check if clicking on an ore
         const ore = this.world.getOreAt(worldX, worldY);
         if (ore && this.player.canMine(ore)) {
@@ -191,8 +240,12 @@ export class Game {
             const rebirthMiningMultiplier = this.rebirthManager.getTotalMultiplier('mining_speed');
             const rebirthCritBonus = this.rebirthManager.getTotalMultiplier('luck');
             
-            const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus + rebirthCritBonus);
-            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier * rebirthMiningMultiplier;
+            // Apply event bonuses
+            const eventCritBonus = this.eventManager.getCritChanceBonus();
+            const eventMiningMultiplier = this.eventManager.getOreSpawnRateBonus();
+            
+            const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus + rebirthCritBonus + eventCritBonus);
+            const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier * rebirthMiningMultiplier * eventMiningMultiplier;
             
             // Apply damage to ore
             ore.health -= damage;
@@ -213,9 +266,17 @@ export class Game {
                 
                 const mined = this.player.mine(ore);
                 if (mined) {
-                    const added = this.inventory.add(ore.type, ore.value, ore.rarity);
+                    // Apply event bonuses to ore value
+                    const eventValueBonus = this.eventManager.getOreValueBonus();
+                    const finalOreValue = ore.value * eventValueBonus;
+                    
+                    const added = this.inventory.add(ore.type, finalOreValue, ore.rarity);
                     if (added) {
                         this.world.removeOre(ore);
+                        
+                        // Track achievement
+                        this.achievementManager.trackOreMined(ore);
+                        this.achievementManager.trackMoneyEarned(finalOreValue);
                         
                         // Update quest progress for mining ores
                         this.questManager.updateProgress('mine', { oreType: ore.type, rarity: ore.rarity });
@@ -225,11 +286,197 @@ export class Game {
                         
                         // Show drop feedback
                         const rarityText = ore.rarity && ore.rarity !== 'Common' ? ` (${ore.rarity})` : '';
-                        this.showDropFeedback(`+1 ${ore.type}${rarityText}`, ore.glowColor, ore.glowIntensity);
+                        const valueText = eventValueBonus > 1 ? ` ($${finalOreValue.toFixed(2)})` : '';
+                        this.showDropFeedback(`+1 ${ore.type}${rarityText}${valueText}`, ore.glowColor, ore.glowIntensity);
                     }
                 }
             }
         }
+    }
+    
+    handleBossCombat(boss) {
+        const pickaxe = this.player.getPickaxe();
+        
+        // Apply pet bonuses
+        const miningSpeedMultiplier = this.petManager.getMiningSpeedMultiplier();
+        const critChanceBonus = this.petManager.getCritChanceBonus();
+        
+        // Apply rebirth bonuses
+        const rebirthMiningMultiplier = this.rebirthManager.getTotalMultiplier('mining_speed');
+        const rebirthCritBonus = this.rebirthManager.getTotalMultiplier('luck');
+        
+        // Apply event bonuses
+        const eventCritBonus = this.eventManager.getCritChanceBonus();
+        const eventMiningMultiplier = this.eventManager.getOreSpawnRateBonus();
+        
+        const isCritical = Math.random() < (pickaxe.critChance + critChanceBonus + rebirthCritBonus + eventCritBonus);
+        const damage = pickaxe.miningPower * (isCritical ? pickaxe.critMultiplier : 1) * miningSpeedMultiplier * rebirthMiningMultiplier * eventMiningMultiplier;
+        
+        // Apply damage to boss
+        const actualDamage = boss.takeDamage(damage);
+        this.bossManager.addDamage(actualDamage);
+        
+        // Screen shake effect
+        this.screenShake = isCritical ? 8 : 4;
+        
+        // Show damage feedback
+        this.showDamageFeedback(actualDamage, boss.x + boss.width / 2, boss.y, isCritical);
+        
+        // Check if boss is defeated
+        if (!boss.isAlive) {
+            const rewards = this.bossManager.handleBossDefeat(boss.id);
+            if (rewards) {
+                // Apply event bonuses to boss coin rewards
+                const eventCoinBonus = this.eventManager.getBossCoinRewardsBonus();
+                if (rewards.bossCoins) {
+                    rewards.bossCoins.min = Math.floor(rewards.bossCoins.min * eventCoinBonus);
+                    rewards.bossCoins.max = Math.floor(rewards.bossCoins.max * eventCoinBonus);
+                }
+                
+                this.showBossDefeatFeedback(boss.name, rewards);
+                
+                // Track achievement
+                this.achievementManager.trackBossDefeated(boss.id);
+                
+                // Add boss coins to player (stored in bossManager, but we could also track in player)
+                // For now, boss coins are tracked in bossManager
+                
+                // Update quest progress for defeating boss
+                this.questManager.updateProgress('defeat_boss', { bossId: boss.id });
+            }
+        }
+    }
+    
+    checkArenaEntrance() {
+        const currentZone = this.world.getCurrentZone();
+        if (!currentZone) return;
+        
+        // Activate arena for current zone
+        this.arenaManager.activateArena(currentZone.id);
+        
+        const activeArena = this.arenaManager.getActiveArena();
+        if (!activeArena) return;
+        
+        // Check if boss should spawn
+        if (activeArena.playerInArena && !activeArena.bossSpawned) {
+            const bossData = getBossByZone(currentZone.id);
+            if (bossData && this.bossManager.canSpawnBoss(bossData.id, this.player)) {
+                const boss = this.bossManager.spawnBoss(bossData.id);
+                if (boss) {
+                    const spawnPos = activeArena.bossSpawnPosition;
+                    boss.x = spawnPos.x;
+                    boss.y = spawnPos.y;
+                    activeArena.setBossSpawned();
+                    this.showBossSpawnFeedback(boss.name);
+                }
+            }
+        }
+    }
+    
+    showBossSpawnFeedback(bossName) {
+        const feedback = document.createElement('div');
+        feedback.textContent = `${bossName} has appeared!`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+            border: 2px solid #c0392b;
+            text-align: center;
+            animation: pulse 0.5s ease-in-out;
+        `;
+        
+        document.body.appendChild(feedback);
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
+    
+    showBossDefeatFeedback(bossName, rewards) {
+        const feedback = document.createElement('div');
+        let rewardText = '';
+        if (rewards.bossCoins) {
+            const coins = Math.floor(Math.random() * (rewards.bossCoins.max - rewards.bossCoins.min + 1)) + rewards.bossCoins.min;
+            rewardText = `+${coins} Boss Coins`;
+        }
+        
+        feedback.textContent = `${bossName} Defeated! ${rewardText}`;
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+            border: 2px solid #2ecc71;
+            text-align: center;
+            animation: pulse 0.5s ease-in-out;
+        `;
+        
+        document.body.appendChild(feedback);
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
+    
+    showAchievementPopup(achievement) {
+        const popup = document.createElement('div');
+        popup.style.cssText = `
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, ${achievement.color} 0%, #2c3e50 100%);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1002;
+            border: 3px solid ${achievement.color};
+            text-align: center;
+            animation: achievementPopup 3s ease-out forwards;
+            box-shadow: 0 0 30px ${achievement.color};
+        `;
+        
+        popup.innerHTML = `
+            <div style="font-size: 40px; margin-bottom: 10px;">${achievement.icon}</div>
+            <div style="font-size: 14px; color: #f1c40f; margin-bottom: 5px;">ACHIEVEMENT UNLOCKED!</div>
+            <div style="font-size: 20px;">${achievement.name}</div>
+            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">${achievement.description}</div>
+        `;
+        
+        // Add animation keyframes if not exists
+        if (!document.getElementById('achievementPopupStyle')) {
+            const style = document.createElement('style');
+            style.id = 'achievementPopupStyle';
+            style.textContent = `
+                @keyframes achievementPopup {
+                    0% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(0.8); }
+                    10% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+                    80% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+                    100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(0.8); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(popup);
+        setTimeout(() => {
+            popup.remove();
+        }, 3000);
     }
     
     showNPCDialogue(npc) {
@@ -425,6 +672,9 @@ export class Game {
                 if (this.world.switchZone(targetZoneId, this.player)) {
                     this.showZoneMessage(`Entered ${targetZone.name}`);
                     
+                    // Track achievement for zone entry
+                    this.achievementManager.trackZoneEntered(targetZoneId);
+                    
                     // Update quest progress for reaching zones
                     this.questManager.updateProgress('zone_change', { zoneId: targetZoneId });
                 }
@@ -494,6 +744,12 @@ export class Game {
         // Render world
         this.world.render(this.ctx);
         
+        // Render arena background if active
+        this.arenaManager.render(this.ctx, this.camera);
+        
+        // Render bosses
+        this.bossManager.render(this.ctx);
+        
         // Render player
         this.player.render(this.ctx);
         
@@ -511,6 +767,12 @@ export class Game {
         const shopBtn = document.getElementById('shopBtn');
         if (shopBtn) {
             shopBtn.addEventListener('click', () => this.shop.open());
+        }
+        
+        // Boss shop button
+        const bossShopBtn = document.getElementById('bossShopBtn');
+        if (bossShopBtn) {
+            bossShopBtn.addEventListener('click', () => this.bossShop.open());
         }
         
         // Save button
@@ -531,6 +793,12 @@ export class Game {
             this.uiElements.money.textContent = `$${this.player.money.toFixed(2)}`;
         }
         
+        // Update boss coins display
+        this.updateBossCoinsDisplay();
+        
+        // Update event display
+        this.updateEventDisplay();
+        
         // Update inventory display
         if (this.uiElements.inventory) {
             this.uiElements.inventory.innerHTML = this.inventory.render();
@@ -550,6 +818,66 @@ export class Game {
         
         // Update rebirth display
         this.updateRebirthDisplay();
+    }
+    
+    updateBossCoinsDisplay() {
+        let bossCoinsElement = document.getElementById('bossCoinsDisplay');
+        
+        if (!bossCoinsElement) {
+            bossCoinsElement = document.createElement('div');
+            bossCoinsElement.id = 'bossCoinsDisplay';
+            bossCoinsElement.style.cssText = `
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: rgba(231, 76, 60, 0.9);
+                color: white;
+                padding: 8px 15px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                border: 2px solid #c0392b;
+            `;
+            document.getElementById('ui').appendChild(bossCoinsElement);
+        }
+        
+        bossCoinsElement.textContent = `Boss Coins: ${this.bossManager.getBossCoins()}`;
+    }
+    
+    updateEventDisplay() {
+        let eventDisplayElement = document.getElementById('eventDisplay');
+        
+        if (!eventDisplayElement) {
+            eventDisplayElement = document.createElement('div');
+            eventDisplayElement.id = 'eventDisplay';
+            eventDisplayElement.style.cssText = `
+                position: absolute;
+                top: 90px;
+                right: 20px;
+                background: rgba(155, 89, 182, 0.9);
+                color: white;
+                padding: 8px 15px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                border: 2px solid #9b59b6;
+                max-width: 200px;
+            `;
+            document.getElementById('ui').appendChild(eventDisplayElement);
+        }
+        
+        const activeEvents = this.eventManager.getAllEventStatuses();
+        
+        if (activeEvents.length === 0) {
+            eventDisplayElement.textContent = 'No Active Events';
+            eventDisplayElement.style.background = 'rgba(52, 73, 94, 0.9)';
+            eventDisplayElement.style.borderColor = '#34495e';
+        } else {
+            const eventNames = activeEvents.map(e => `${e.icon} ${e.name} (${e.remainingTimeFormatted})`).join('\n');
+            eventDisplayElement.textContent = eventNames;
+            eventDisplayElement.style.background = 'rgba(155, 89, 182, 0.9)';
+            eventDisplayElement.style.borderColor = '#9b59b6';
+        }
     }
     
     updateZoneDisplay() {

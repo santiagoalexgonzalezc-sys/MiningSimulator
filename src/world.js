@@ -203,6 +203,70 @@ export class World {
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
+        } else if (style === 'star') {
+            const cx = ore.x + ore.width / 2;
+            const cy = ore.y + ore.height / 2;
+            const outerRadius = ore.width / 2;
+            const innerRadius = ore.width / 4;
+            ctx.beginPath();
+            for (let i = 0; i < 10; i++) {
+                const angle = (Math.PI / 5) * i - Math.PI / 2;
+                const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                const px = cx + radius * Math.cos(angle);
+                const py = cy + radius * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        } else if (style === 'octagon') {
+            const cx = ore.x + ore.width / 2;
+            const cy = ore.y + ore.height / 2;
+            const size = ore.width / 2;
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const angle = (Math.PI / 4) * i - Math.PI / 8;
+                const px = cx + size * Math.cos(angle);
+                const py = cy + size * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        } else if (style === 'spiral') {
+            const cx = ore.x + ore.width / 2;
+            const cy = ore.y + ore.height / 2;
+            ctx.beginPath();
+            for (let i = 0; i < 100; i++) {
+                const angle = i * 0.2;
+                const radius = i * 0.3;
+                const px = cx + radius * Math.cos(angle);
+                const py = cy + radius * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, ore.width / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        } else if (style === 'infinity') {
+            const cx = ore.x + ore.width / 2;
+            const cy = ore.y + ore.height / 2;
+            const scale = ore.width / 40;
+            ctx.beginPath();
+            ctx.moveTo(cx - 20 * scale, cy);
+            ctx.bezierCurveTo(cx - 20 * scale, cy - 15 * scale, cx - 10 * scale, cy - 15 * scale, cx, cy);
+            ctx.bezierCurveTo(cx + 10 * scale, cy + 15 * scale, cx + 20 * scale, cy + 15 * scale, cx + 20 * scale, cy);
+            ctx.bezierCurveTo(cx + 20 * scale, cy - 15 * scale, cx + 10 * scale, cy - 15 * scale, cx, cy);
+            ctx.bezierCurveTo(cx - 10 * scale, cy + 15 * scale, cx - 20 * scale, cy + 15 * scale, cx - 20 * scale, cy);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, ore.width / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
         } else {
             // Default square
             ctx.fillRect(ore.x, ore.y, ore.width, ore.height);

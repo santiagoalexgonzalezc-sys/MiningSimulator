@@ -14,6 +14,11 @@ export class SaveSystem {
             questManager: game.questManager.toJSON(),
             petManager: game.petManager.toJSON(),
             rebirthManager: game.rebirthManager.toJSON(),
+            bossManager: game.bossManager.toJSON(),
+            arenaManager: game.arenaManager.toJSON(),
+            bossShop: game.bossShop.toJSON(),
+            eventManager: game.eventManager.toJSON(),
+            achievementManager: game.achievementManager.toJSON(),
             timestamp: Date.now()
         };
         
@@ -62,6 +67,21 @@ export class SaveSystem {
                 }
                 if (data.rebirthManager) {
                     game.rebirthManager.fromJSON(data.rebirthManager);
+                }
+                if (data.bossManager) {
+                    game.bossManager.fromJSON(data.bossManager);
+                }
+                if (data.arenaManager) {
+                    game.arenaManager.fromJSON(data.arenaManager);
+                }
+                if (data.bossShop) {
+                    game.bossShop.fromJSON(data.bossShop);
+                }
+                if (data.eventManager) {
+                    game.eventManager.fromJSON(data.eventManager);
+                }
+                if (data.achievementManager) {
+                    game.achievementManager.fromJSON(data.achievementManager);
                 }
                 console.log('Game loaded successfully');
                 return true;

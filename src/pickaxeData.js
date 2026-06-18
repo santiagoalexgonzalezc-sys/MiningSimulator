@@ -81,11 +81,33 @@ export const PICKAXES = {
         cost: 25000,
         color: '#9B59B6',
         description: 'Legendary mythic pickaxe. God-tier mining power.'
+    },
+    DIVINE: {
+        id: 'divine',
+        name: 'Divine Pickaxe',
+        miningPower: 170,
+        miningSpeed: 1.8,
+        critChance: 0.16,
+        critMultiplier: 2.8,
+        cost: 100000,
+        color: '#FFD700',
+        description: 'Divine pickaxe with golden aura and white glow. Ultimate power.'
+    },
+    COSMIC: {
+        id: 'cosmic',
+        name: 'Cosmic Pickaxe',
+        miningPower: 250,
+        miningSpeed: 2.1,
+        critChance: 0.21,
+        critMultiplier: 3.0,
+        cost: 500000,
+        color: '#00FFFF',
+        description: 'Cosmic pickaxe with galaxy effects. Beyond divine power.'
     }
 };
 
 // Pickaxe progression order
-export const PICKAXE_ORDER = ['wooden', 'stone', 'iron', 'steel', 'gold', 'diamond', 'mythic'];
+export const PICKAXE_ORDER = ['wooden', 'stone', 'iron', 'steel', 'gold', 'diamond', 'mythic', 'divine', 'cosmic'];
 
 /**
  * Get pickaxe by ID
