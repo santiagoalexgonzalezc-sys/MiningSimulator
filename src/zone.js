@@ -76,7 +76,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'crystal',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'surface',
-        unlockRequirement: { type: 'money', value: 250 },
+        unlockRequirement: { type: 'money', value: 2000 },
         unlockMessage: 'Requires $250 to unlock'
     },
     {
@@ -90,7 +90,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'lava',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'cave',
-        unlockRequirement: { type: 'money', value: 1000 },
+        unlockRequirement: { type: 'money', value: 5000 },
         unlockMessage: 'Requires $1000 to unlock'
     },
     {
@@ -104,7 +104,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'void',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'crystal',
-        unlockRequirement: { type: 'money', value: 2500 },
+        unlockRequirement: { type: 'money', value: 15000 },
         unlockMessage: 'Requires $2500 to unlock'
     },
     {
@@ -118,7 +118,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'celestial',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'lava',
-        unlockRequirement: { type: 'money', value: 10000 },
+        unlockRequirement: { type: 'money', value: 50000 },
         unlockMessage: 'Requires $10,000 to unlock'
     },
     {
@@ -132,7 +132,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'cosmic',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'void',
-        unlockRequirement: { type: 'money', value: 50000 },
+        unlockRequirement: { type: 'money', value: 100000 },
         unlockMessage: 'Requires $50,000 to unlock'
     },
     {
@@ -146,7 +146,7 @@ export const ZONE_DEFINITIONS = [
         portalTarget: 'infinity',
         backPortalPosition: { x: 100, y: 100 },
         backPortalTarget: 'celestial',
-        unlockRequirement: { type: 'money', value: 250000 },
+        unlockRequirement: { type: 'money', value: 500000 },
         unlockMessage: 'Requires $250,000 to unlock'
     },
     {
