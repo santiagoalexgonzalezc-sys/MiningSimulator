@@ -11,6 +11,7 @@ export class World {
         this.ores = [];
         this.maxOres = 50;
         this.npcs = [];
+        this.portalCooldown = 0;
         
         // Define sell zone
         this.sellZone = {
@@ -113,13 +114,19 @@ export class World {
     }
     
     update(dt) {
+        if (this.portalCooldown > 0) {
+            this.portalCooldown = Math.max(0, this.portalCooldown - dt);
+        }
+        
         // Respawn ores over time
         if (this.ores.length < this.maxOres && Math.random() < 0.01) {
             this.spawnRandomOre();
         }
     }
     
-    render(ctx) {
+    render(ctx, options = {}) {
+        const { skipOres = false } = options;
+        
         // Draw ground with current zone's background color
         ctx.fillStyle = this.currentZone.backgroundColor;
         ctx.fillRect(0, 0, this.width, this.height);
@@ -151,17 +158,23 @@ export class World {
         // Draw portal
         this.drawPortal(ctx);
         
-        // Draw ores
-        for (const ore of this.ores) {
-            this.drawOre(ctx, ore);
+        if (!skipOres) {
+            this.renderOres(ctx);
         }
         
         // Draw NPCs
         this.drawNPCs(ctx);
     }
     
+    renderOres(ctx) {
+        for (const ore of this.ores) {
+            this.drawOre(ctx, ore);
+        }
+    }
+    
     drawOre(ctx, ore) {
         const style = ore.rockStyle || 'square';
+        const outlineColor = ore.glowColor || '#ffffff';
         
         // Draw glow effect for rare ores
         if (ore.glowColor && ore.glowIntensity > 0) {
@@ -171,7 +184,7 @@ export class World {
         
         // Draw ore body based on rock style
         ctx.fillStyle = ore.color;
-        ctx.strokeStyle = '#000000';
+        ctx.strokeStyle = outlineColor;
         ctx.lineWidth = 2;
         
         if (style === 'circle') {
@@ -299,31 +312,55 @@ export class World {
     }
     
     drawPortal(ctx) {
+        // Draw forward portal
         const portal = this.currentZone.portalPosition;
         const targetZone = this.zones.get(this.currentZone.portalTarget);
         
-        if (!targetZone) return;
+        if (targetZone) {
+            // Draw portal
+            ctx.fillStyle = targetZone.unlocked ? '#9b59b6' : '#7f8c8d';
+            ctx.beginPath();
+            ctx.arc(portal.x, portal.y, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw portal glow
+            ctx.strokeStyle = targetZone.unlocked ? '#8e44ad' : '#95a5a6';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw portal text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(targetZone.unlocked ? `To ${targetZone.name}` : 'Locked', portal.x, portal.y + 5);
+            
+            if (!targetZone.unlocked) {
+                ctx.font = '10px Arial';
+                ctx.fillText(targetZone.unlockMessage, portal.x, portal.y + 20);
+            }
+        }
         
-        // Draw portal
-        ctx.fillStyle = targetZone.unlocked ? '#9b59b6' : '#7f8c8d';
-        ctx.beginPath();
-        ctx.arc(portal.x, portal.y, 40, 0, Math.PI * 2);
-        ctx.fill();
+        // Draw backward portal
+        const backPortal = this.currentZone.backPortalPosition;
+        const backTargetZone = this.zones.get(this.currentZone.backPortalTarget);
         
-        // Draw portal glow
-        ctx.strokeStyle = targetZone.unlocked ? '#8e44ad' : '#95a5a6';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-        
-        // Draw portal text
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(targetZone.unlocked ? `To ${targetZone.name}` : 'Locked', portal.x, portal.y + 5);
-        
-        if (!targetZone.unlocked) {
-            ctx.font = '10px Arial';
-            ctx.fillText(targetZone.unlockMessage, portal.x, portal.y + 20);
+        if (backPortal && backTargetZone) {
+            // Draw portal (different color for backward portal)
+            ctx.fillStyle = '#e67e22';
+            ctx.beginPath();
+            ctx.arc(backPortal.x, backPortal.y, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw portal glow
+            ctx.strokeStyle = '#d35400';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw portal text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Back to ${backTargetZone.name}`, backPortal.x, backPortal.y + 5);
         }
     }
     
@@ -357,6 +394,11 @@ export class World {
     }
     
     checkPortalCollision(player) {
+        if (this.portalCooldown > 0) {
+            return null;
+        }
+        
+        // Check forward portal
         const portal = this.currentZone.portalPosition;
         const dx = (player.x + player.width / 2) - portal.x;
         const dy = (player.y + player.height / 2) - portal.y;
@@ -365,6 +407,19 @@ export class World {
         if (distance < 50) {
             return this.currentZone.portalTarget;
         }
+        
+        // Check backward portal
+        const backPortal = this.currentZone.backPortalPosition;
+        if (backPortal) {
+            const backDx = (player.x + player.width / 2) - backPortal.x;
+            const backDy = (player.y + player.height / 2) - backPortal.y;
+            const backDistance = Math.sqrt(backDx * backDx + backDy * backDy);
+            
+            if (backDistance < 50) {
+                return this.currentZone.backPortalTarget;
+            }
+        }
+        
         return null;
     }
     
@@ -383,6 +438,12 @@ export class World {
         // Reset player position
         player.x = targetZone.startPosition.x;
         player.y = targetZone.startPosition.y;
+        
+        // Update player's current zone
+        player.currentZone = zoneId;
+        
+        // Prevent immediately triggering the spawn-area back portal
+        this.portalCooldown = 1.0;
         
         return true;
     }

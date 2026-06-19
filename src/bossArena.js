@@ -93,7 +93,7 @@ export class BossArena {
      * Render arena background
      */
     renderBackground(ctx, camera) {
-        if (!this.isActive) return;
+        if (!this.isActive || !this.playerInArena) return;
         
         // Calculate visible area
         const startX = Math.floor(camera.x / 50) * 50;

@@ -23,6 +23,9 @@ export class Player {
         this.level = 1;
         this.xp = 0;
         this.xpToNextLevel = 100;
+        
+        // Zone tracking
+        this.currentZone = 'surface';
     }
     
     update(dt, keys, world) {
@@ -171,7 +174,8 @@ export class Player {
             pickaxeId: this.pickaxeId,
             level: this.level,
             xp: this.xp,
-            xpToNextLevel: this.xpToNextLevel
+            xpToNextLevel: this.xpToNextLevel,
+            currentZone: this.currentZone
         };
     }
     
@@ -183,5 +187,6 @@ export class Player {
         this.level = data.level || 1;
         this.xp = data.xp || 0;
         this.xpToNextLevel = data.xpToNextLevel || 100;
+        this.currentZone = data.currentZone || 'surface';
     }
 }

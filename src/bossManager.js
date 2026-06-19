@@ -61,10 +61,16 @@ export class BossManager {
      */
     canSpawnBoss(bossId, player) {
         const bossData = getBoss(bossId);
-        if (!bossData) return false;
+        if (!bossData) {
+            console.log(`Boss ${bossId} not found`);
+            return false;
+        }
         
         // Check if already active
-        if (this.activeBosses[bossId]) return false;
+        if (this.activeBosses[bossId]) {
+            console.log(`Boss ${bossId} already active`);
+            return false;
+        }
         
         // Check respawn timer
         if (this.bossRespawns[bossId]) {
@@ -75,10 +81,16 @@ export class BossManager {
         }
         
         // Check player level
-        if (player.level < bossData.level) return false;
+        if (player.level < bossData.level) {
+            console.log(`Player level ${player.level} < boss level ${bossData.level}`);
+            return false;
+        }
         
         // Check if player is in correct zone
-        if (player.currentZone !== bossData.requiredZone) return false;
+        if (player.currentZone !== bossData.requiredZone) {
+            console.log(`Player zone ${player.currentZone} != boss zone ${bossData.requiredZone}`);
+            return false;
+        }
         
         return true;
     }

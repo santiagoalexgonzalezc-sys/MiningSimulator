@@ -741,8 +741,8 @@ export class Game {
         this.ctx.save();
         this.ctx.translate(-this.camera.x + shakeX, -this.camera.y + shakeY);
         
-        // Render world
-        this.world.render(this.ctx);
+        // Render world (ores drawn separately so they stay visible near the player)
+        this.world.render(this.ctx, { skipOres: true });
         
         // Render arena background if active
         this.arenaManager.render(this.ctx, this.camera);
@@ -752,6 +752,9 @@ export class Game {
         
         // Render player
         this.player.render(this.ctx);
+        
+        // Render ores on top so the player sprite does not hide nearby minerals
+        this.world.renderOres(this.ctx);
         
         // Restore context
         this.ctx.restore();

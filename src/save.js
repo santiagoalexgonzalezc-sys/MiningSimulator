@@ -59,6 +59,11 @@ export class SaveSystem {
                 game.player.fromJSON(data.player);
                 game.inventory.fromJSON(data.inventory);
                 game.world.fromJSON(data.world);
+                
+                // Sync player's currentZone with world's currentZone
+                if (game.world.currentZone && game.world.currentZone.id) {
+                    game.player.currentZone = game.world.currentZone.id;
+                }
                 if (data.questManager) {
                     game.questManager.fromJSON(data.questManager);
                 }
