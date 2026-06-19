@@ -86,7 +86,7 @@ export const ORE_TYPES = {
         name: 'Coal',
         baseValue: 5,
         requiredPower: 1,
-        health: 3,
+        health: 5,
         color: '#2c3e50',
         allowedRarities: ['common', 'uncommon', 'rare', 'epic']
     },
@@ -95,7 +95,7 @@ export const ORE_TYPES = {
         name: 'Iron',
         baseValue: 10,
         requiredPower: 2,
-        health: 5,
+        health: 10,
         color: '#95a5a6',
         allowedRarities: ['common', 'uncommon', 'rare', 'epic']
     },
@@ -104,7 +104,7 @@ export const ORE_TYPES = {
         name: 'Gold',
         baseValue: 20,
         requiredPower: 3,
-        health: 8,
+        health: 20,
         color: '#f1c40f',
         allowedRarities: ['uncommon', 'rare', 'epic']
     },
@@ -113,7 +113,7 @@ export const ORE_TYPES = {
         name: 'Diamond',
         baseValue: 40,
         requiredPower: 5,
-        health: 12,
+        health: 30,
         color: '#3498db',
         allowedRarities: ['rare', 'epic', 'legendary']
     },
@@ -122,7 +122,7 @@ export const ORE_TYPES = {
         name: 'Emerald',
         baseValue: 80,
         requiredPower: 6,
-        health: 15,
+        health: 40,
         color: '#27ae60',
         allowedRarities: ['epic', 'legendary']
     },
@@ -131,7 +131,7 @@ export const ORE_TYPES = {
         name: 'Ruby',
         baseValue: 160,
         requiredPower: 7,
-        health: 18,
+        health: 50,
         color: '#e74c3c',
         allowedRarities: ['legendary', 'mythic']
     },
@@ -140,7 +140,7 @@ export const ORE_TYPES = {
         name: 'Mythic',
         baseValue: 320,
         requiredPower: 10,
-        health: 25,
+        health: 60,
         color: '#9b59b6',
         allowedRarities: ['mythic']
     },
@@ -150,7 +150,7 @@ export const ORE_TYPES = {
         name: 'Void Shard',
         baseValue: 1280,
         requiredPower: 12,
-        health: 30,
+        health: 70,
         color: '#4b0082',
         allowedRarities: ['legendary']
     },
@@ -159,7 +159,7 @@ export const ORE_TYPES = {
         name: 'Ancient Relic',
         baseValue: 1600,
         requiredPower: 13,
-        health: 32,
+        health: 80,
         color: '#800080',
         allowedRarities: ['legendary']
     },
@@ -168,7 +168,7 @@ export const ORE_TYPES = {
         name: 'Celestial Fragment',
         baseValue: 2560,
         requiredPower: 14,
-        health: 35,
+        health: 90,
         color: '#00bfff',
         allowedRarities: ['mythic']
     },
@@ -177,7 +177,7 @@ export const ORE_TYPES = {
         name: 'Astral Gem',
         baseValue: 3000,
         requiredPower: 15,
-        health: 38,
+        health: 100,
         color: '#7b68ee',
         allowedRarities: ['mythic']
     },
@@ -187,7 +187,7 @@ export const ORE_TYPES = {
         name: 'Divine Essence',
         baseValue: 5120,
         requiredPower: 18,
-        health: 45,
+        health: 110,
         color: '#ffd700',
         allowedRarities: ['mythic']
     },
@@ -196,7 +196,7 @@ export const ORE_TYPES = {
         name: 'Starcore',
         baseValue: 7500,
         requiredPower: 20,
-        health: 50,
+        health: 120,
         color: '#fff8dc',
         allowedRarities: ['mythic']
     },
@@ -205,7 +205,7 @@ export const ORE_TYPES = {
         name: 'Cosmic Crystal',
         baseValue: 10240,
         requiredPower: 22,
-        health: 55,
+        health: 130,
         color: '#e6e6fa',
         allowedRarities: ['mythic']
     },
@@ -214,7 +214,7 @@ export const ORE_TYPES = {
         name: 'Eternium',
         baseValue: 15000,
         requiredPower: 25,
-        health: 60,
+        health: 140,
         color: '#f0e68c',
         allowedRarities: ['mythic']
     },
@@ -224,7 +224,7 @@ export const ORE_TYPES = {
         name: 'Nebulite',
         baseValue: 20480,
         requiredPower: 30,
-        health: 70,
+        health: 150,
         color: '#ff69b4',
         allowedRarities: ['secret']
     },
@@ -233,7 +233,7 @@ export const ORE_TYPES = {
         name: 'Quantum Core',
         baseValue: 30000,
         requiredPower: 35,
-        health: 80,
+        health: 160,
         color: '#00ff00',
         allowedRarities: ['secret']
     },
@@ -242,7 +242,7 @@ export const ORE_TYPES = {
         name: 'Infinity Stone',
         baseValue: 40960,
         requiredPower: 40,
-        health: 90,
+        health: 170,
         color: '#ff4500',
         allowedRarities: ['secret']
     },
@@ -251,7 +251,7 @@ export const ORE_TYPES = {
         name: 'Chrono Crystal',
         baseValue: 60000,
         requiredPower: 45,
-        health: 100,
+        health: 180,
         color: '#00ffff',
         allowedRarities: ['secret']
     },
@@ -260,7 +260,7 @@ export const ORE_TYPES = {
         name: 'Singularity Ore',
         baseValue: 80000,
         requiredPower: 50,
-        health: 110,
+        health: 190,
         color: '#1a1a1a',
         allowedRarities: ['secret']
     },
@@ -270,7 +270,7 @@ export const ORE_TYPES = {
         name: 'Genesis Crystal',
         baseValue: 120000,
         requiredPower: 60,
-        health: 125,
+        health: 500,
         color: '#ffffff',
         allowedRarities: ['ultra_secret']
     },
@@ -279,7 +279,7 @@ export const ORE_TYPES = {
         name: 'Reality Shard',
         baseValue: 180000,
         requiredPower: 70,
-        health: 140,
+        health: 600,
         color: '#ff1493',
         allowedRarities: ['ultra_secret']
     },
@@ -288,7 +288,7 @@ export const ORE_TYPES = {
         name: 'Primordial Essence',
         baseValue: 250000,
         requiredPower: 80,
-        health: 160,
+        health: 700,
         color: '#ffdead',
         allowedRarities: ['ultra_secret']
     },
@@ -297,7 +297,7 @@ export const ORE_TYPES = {
         name: 'Worldheart',
         baseValue: 500000,
         requiredPower: 100,
-        health: 200,
+        health: 800,
         color: '#ff0000',
         allowedRarities: ['ultra_secret']
     }
