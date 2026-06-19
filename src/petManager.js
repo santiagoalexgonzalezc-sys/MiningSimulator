@@ -35,7 +35,7 @@ export class PetManager {
             emoji: petTemplate.emoji,
             level: 1,
             xp: 0,
-            xpToNextLevel: 100
+            xpToNextLevel: 250
         };
         
         this.ownedPets.push(newPet);
