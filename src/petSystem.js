@@ -9,37 +9,37 @@ export const PET_RARITY = {
         name: 'Common',
         color: '#95a5a6',
         bonusMultiplier: 1.0,
-        maxLevel: 10
+        maxLevel: 100
     },
     UNCOMMON: {
         name: 'Uncommon',
         color: '#27ae60',
         bonusMultiplier: 1.0,
-        maxLevel: 15
+        maxLevel: 100
     },
     RARE: {
         name: 'Rare',
         color: '#3498db',
         bonusMultiplier: 1.0,
-        maxLevel: 20
+        maxLevel: 100
     },
     EPIC: {
         name: 'Epic',
         color: '#9b59b6',
         bonusMultiplier: 1.0,
-        maxLevel: 25
+        maxLevel: 100
     },
     LEGENDARY: {
         name: 'Legendary',
         color: '#f39c12',
         bonusMultiplier: 1.0,
-        maxLevel: 30
+        maxLevel: 100
     },
     MYTHIC: {
         name: 'Mythic',
         color: '#e74c3c',
         bonusMultiplier: 1.0,
-        maxLevel: 50
+        maxLevel: 100
     }
 };
 
@@ -181,7 +181,7 @@ export const EGGS = {
         id: 'common_egg',
         name: 'Common Egg',
         rarity: 'COMMON',
-        cost: 50,
+        cost: 250,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.8,
@@ -196,7 +196,7 @@ export const EGGS = {
         id: 'uncommon_egg',
         name: 'Uncommon Egg',
         rarity: 'UNCOMMON',
-        cost: 250,
+        cost: 500,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.5,
@@ -211,7 +211,7 @@ export const EGGS = {
         id: 'rare_egg',
         name: 'Rare Egg',
         rarity: 'RARE',
-        cost: 1000,
+        cost: 2500,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0.2,
@@ -226,7 +226,7 @@ export const EGGS = {
         id: 'epic_egg',
         name: 'Epic Egg',
         rarity: 'EPIC',
-        cost: 5000,
+        cost: 50000,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0,
@@ -241,7 +241,7 @@ export const EGGS = {
         id: 'legendary_egg',
         name: 'Legendary Egg',
         rarity: 'LEGENDARY',
-        cost: 25000,
+        cost: 100000,
         emoji: '🥚',
         hatchChances: {
             COMMON: 0,
