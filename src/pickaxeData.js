@@ -23,7 +23,7 @@ export const PICKAXES = {
         miningSpeed: 1.1,
         critChance: 0.06,
         critMultiplier: 2.1,
-        cost: 50,
+        cost: 500,
         color: '#808080',
         description: 'Sturdier stone pickaxe. Better mining speed.'
     },
@@ -34,7 +34,7 @@ export const PICKAXES = {
         miningSpeed: 1.2,
         critChance: 0.07,
         critMultiplier: 2.2,
-        cost: 250,
+        cost: 5000,
         color: '#A9A9A9',
         description: 'Durable iron pickaxe. Significant power boost.'
     },
@@ -45,7 +45,7 @@ export const PICKAXES = {
         miningSpeed: 1.3,
         critChance: 0.08,
         critMultiplier: 2.3,
-        cost: 1000,
+        cost: 50000,
         color: '#4682B4',
         description: 'Reinforced steel pickaxe. Excellent mining efficiency.'
     },
@@ -56,7 +56,7 @@ export const PICKAXES = {
         miningSpeed: 1.4,
         critChance: 0.09,
         critMultiplier: 2.4,
-        cost: 2500,
+        cost: 100000,
         color: '#FFD700',
         description: 'Golden pickaxe. High power and crit chance.'
     },
@@ -67,7 +67,7 @@ export const PICKAXES = {
         miningSpeed: 1.5,
         critChance: 0.10,
         critMultiplier: 2.5,
-        cost: 7500,
+        cost: 500000,
         color: '#00BFFF',
         description: 'Diamond pickaxe. Ultimate mining power.'
     },
@@ -78,7 +78,7 @@ export const PICKAXES = {
         miningSpeed: 1.6,
         critChance: 0.11,
         critMultiplier: 2.6,
-        cost: 25000,
+        cost: 10000000,
         color: '#9B59B6',
         description: 'Legendary mythic pickaxe. God-tier mining power.'
     },
@@ -89,7 +89,7 @@ export const PICKAXES = {
         miningSpeed: 1.8,
         critChance: 0.16,
         critMultiplier: 2.8,
-        cost: 100000,
+        cost: 100000000,
         color: '#FFD700',
         description: 'Divine pickaxe with golden aura and white glow. Ultimate power.'
     },
@@ -100,7 +100,7 @@ export const PICKAXES = {
         miningSpeed: 2.1,
         critChance: 0.21,
         critMultiplier: 3.0,
-        cost: 500000,
+        cost: 1000000000,
         color: '#00FFFF',
         description: 'Cosmic pickaxe with galaxy effects. Beyond divine power.'
     }
