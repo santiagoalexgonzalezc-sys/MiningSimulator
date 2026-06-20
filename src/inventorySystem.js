@@ -18,7 +18,7 @@ export const BACKPACKS = {
     SMALL: {
         id: 'small',
         name: 'Small Backpack',
-        capacity: 20,
+        capacity: 100,
         cost: 0,
         color: '#8B4513',
         description: 'Basic backpack for starting miners.'
@@ -26,8 +26,8 @@ export const BACKPACKS = {
     MEDIUM: {
         id: 'medium',
         name: 'Medium Backpack',
-        capacity: 40,
-        cost: 100,
+        capacity: 50,
+        cost: 500,
         color: '#A0522D',
         description: 'Spacious backpack for serious mining.'
     },
@@ -35,39 +35,39 @@ export const BACKPACKS = {
         id: 'large',
         name: 'Large Backpack',
         capacity: 75,
-        cost: 500,
+        cost: 5000,
         color: '#CD853F',
         description: 'Large backpack for extended mining sessions.'
     },
     EPIC: {
         id: 'epic',
         name: 'Epic Backpack',
-        capacity: 120,
-        cost: 2500,
+        capacity: 200,
+        cost: 50000,
         color: '#DAA520',
         description: 'Epic backpack for professional miners.'
     },
     MYTHIC: {
         id: 'mythic',
         name: 'Mythic Backpack',
-        capacity: 200,
-        cost: 12500,
+        capacity: 300,
+        cost: 100000,
         color: '#FFD700',
         description: 'Legendary backpack with massive capacity.'
     },
     DIVINE: {
         id: 'divine',
         name: 'Divine Backpack',
-        capacity: 350,
-        cost: 50000,
+        capacity: 500,
+        cost: 5000000,
         color: '#FFA500',
         description: 'Divine backpack with +5% ore value bonus.'
     },
     COSMIC: {
         id: 'cosmic',
         name: 'Cosmic Backpack',
-        capacity: 600,
-        cost: 250000,
+        capacity: 1000,
+        cost: 10000000,
         color: '#00FFFF',
         description: 'Cosmic backpack with +10% ore value and +5% luck bonuses.'
     }
